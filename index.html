@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CyberVault — Anonymous Chat</title>
   
   <!-- PWA Theme Color -->
@@ -21,67 +21,82 @@
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
 
-    body {
-      background: radial-gradient(circle at top left, #0d1117, #010409);
+    body, html {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      background: #0d1117;
       color: #e6edf3;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       overflow: hidden;
-      -webkit-user-select: none;
-      user-select: none;
     }
 
     .hidden { display: none !important; }
 
     .app-card {
-      background: rgba(22, 27, 34, 0.75);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      background: #161b22;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       width: 100%;
-      max-width: 420px;
-      height: 620px;
+      max-width: 480px;
+      height: 100%;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      animation: fadeIn 0.4s ease-out;
+      position: relative;
+    }
+
+    @media (min-width: 481px) {
+      .app-card {
+        height: 92vh;
+        max-height: 750px;
+        border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+      }
     }
 
     #auth-screen {
-      padding: 30px 25px;
+      padding: 30px 20px;
       text-align: center;
       justify-content: center;
       overflow-y: auto;
     }
 
     .brand-icon {
-      font-size: 45px;
+      font-size: 48px;
       color: #238636;
-      margin-bottom: 10px;
-      text-shadow: 0 0 20px rgba(35, 134, 54, 0.5);
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px rgba(35, 134, 54, 0.4);
     }
 
-    .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-    .auth-subtitle { font-size: 12px; color: #8b949e; margin-bottom: 20px; }
+    .auth-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .auth-subtitle { font-size: 13px; color: #8b949e; margin-bottom: 24px; }
 
-    .input-group { position: relative; margin-bottom: 15px; }
-    .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8b949e; }
+    .input-group { position: relative; margin-bottom: 16px; }
+    .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b949e; }
 
     input[type="text"] {
       width: 100%;
-      background: rgba(13, 17, 23, 0.8);
+      background: #0d1117;
       border: 1px solid #30363d;
       color: #fff;
-      padding: 12px 12px 12px 42px;
-      border-radius: 12px;
-      font-size: 14px;
+      padding: 14px 14px 14px 46px;
+      border-radius: 14px;
+      font-size: 15px;
       outline: none;
       transition: all 0.3s;
+      -webkit-user-select: text;
+      user-select: text;
     }
 
     input[type="text"]:focus { border-color: #238636; box-shadow: 0 0 10px rgba(35, 134, 54, 0.3); }
@@ -91,16 +106,16 @@
       background: linear-gradient(135deg, #238636, #2ea043);
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .admin-rooms-title {
@@ -108,35 +123,34 @@
       color: #8b949e;
       text-transform: uppercase;
       letter-spacing: 1px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       text-align: left;
     }
 
     .admin-rooms-grid {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
     .room-card-btn {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 10px 14px;
-      border-radius: 10px;
+      padding: 12px 16px;
+      border-radius: 12px;
       color: #c9d1d9;
-      font-size: 13px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: 0.2s;
     }
 
-    .room-card-btn:hover { background: rgba(35, 134, 54, 0.15); border-color: #238636; }
+    .room-card-btn:active { background: rgba(35, 134, 54, 0.2); }
 
     .chat-header {
-      padding: 15px 18px;
-      background: rgba(13, 17, 23, 0.6);
+      padding: 12px 16px;
+      background: #0d1117;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       justify-content: space-between;
@@ -146,44 +160,91 @@
     .room-info { display: flex; flex-direction: column; gap: 2px; }
     .room-name-container { display: flex; align-items: center; gap: 8px; }
     .status-dot { width: 8px; height: 8px; background-color: #2ea043; border-radius: 50%; box-shadow: 0 0 8px #2ea043; }
-    .room-name { font-weight: 600; font-size: 15px; }
+    .room-name { font-weight: 700; font-size: 15px; }
     .online-count { font-size: 11px; color: #8b949e; }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .clear-btn {
+      background: rgba(248, 81, 73, 0.15);
+      color: #ff7b72;
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .clear-btn:active { background: rgba(248, 81, 73, 0.3); }
 
     .alias-badge {
       background: rgba(56, 139, 253, 0.15);
       color: #58a6ff;
       border: 1px solid rgba(56, 139, 253, 0.3);
-      padding: 4px 10px;
+      padding: 5px 10px;
       border-radius: 20px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
     }
 
     #messages-container {
       flex: 1;
-      padding: 18px;
+      padding: 16px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+    }
+
+    .system-welcome-card {
+      background: rgba(35, 134, 54, 0.1);
+      border: 1px dashed rgba(46, 160, 67, 0.4);
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .welcome-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3fb950;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .welcome-text {
+      font-size: 11.5px;
+      color: #8b949e;
+      line-height: 1.4;
     }
 
     .message {
-      max-width: 80%;
+      max-width: 82%;
       padding: 10px 14px;
-      border-radius: 14px;
-      font-size: 13.5px;
+      border-radius: 16px;
+      font-size: 14px;
       line-height: 1.4;
       word-break: break-word;
       position: relative;
-      animation: popIn 0.2s ease-out;
     }
 
     .message.outgoing {
       align-self: flex-end;
       background: linear-gradient(135deg, #1f6fed, #1158c7);
       color: #fff;
-      border-bottom-right-radius: 3px;
+      border-bottom-right-radius: 4px;
     }
 
     .message.incoming {
@@ -191,35 +252,35 @@
       background: #21262d;
       border: 1px solid #30363d;
       color: #c9d1d9;
-      border-bottom-left-radius: 3px;
+      border-bottom-left-radius: 4px;
     }
 
-    .sender-tag { font-size: 10.5px; font-weight: 700; margin-bottom: 3px; display: block; opacity: 0.8; }
+    .sender-tag { font-size: 10px; font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.85; }
 
     .unsend-btn {
       font-size: 10px;
       color: rgba(255, 255, 255, 0.6);
-      margin-top: 4px;
+      margin-top: 5px;
       display: inline-block;
       cursor: pointer;
       text-align: right;
       width: 100%;
     }
-    .unsend-btn:hover { color: #ff7b72; text-decoration: underline; }
 
     .chat-input-area {
-      padding: 12px 18px;
-      background: rgba(13, 17, 23, 0.8);
+      padding: 12px 14px;
+      background: #0d1117;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      align-items: center;
     }
 
     .chat-input-area input { flex: 1; margin-bottom: 0; padding-left: 14px; }
 
     .send-btn {
-      width: 44px;
-      height: 44px;
+      width: 46px;
+      height: 46px;
       background: #238636;
       border: none;
       color: white;
@@ -228,27 +289,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 15px;
+      font-size: 16px;
     }
 
-    #messages-container::-webkit-scrollbar { width: 4px; }
+    #messages-container::-webkit-scrollbar { width: 3px; }
     #messages-container::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-  <!-- ১. জয়েন স্ক্রিন -->
+  <!-- ১. জয়েন স্ক্রিন -->
   <div id="auth-screen" class="app-card">
     <div class="brand-icon"><i class="fa-solid fa-user-shield"></i></div>
     <div class="auth-title">CyberVault Chat</div>
-    <div class="auth-subtitle">End-to-End Anonymous Chat Room</div>
+    <div class="auth-subtitle">Created by Kazim Nahiyan</div>
     
     <div class="input-group">
       <i class="fa-solid fa-key"></i>
-      <input type="text" id="room-id-input" placeholder="Secret Room ID" autocomplete="off">
+      <input type="text" id="room-id-input" placeholder="Enter Secret Room ID" autocomplete="off">
     </div>
 
     <button id="join-btn" class="btn-primary">
@@ -259,16 +317,16 @@
     <div class="admin-rooms-title">Built-in Vault Rooms</div>
     <div class="admin-rooms-grid">
       <div class="room-card-btn" onclick="quickJoin('Vault Alpha')">
-        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 6px;"></i> Vault Alpha</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 8px;"></i> Vault Alpha</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
       </div>
       <div class="room-card-btn" onclick="quickJoin('Vault Beta')">
-        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 6px;"></i> Vault Beta</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 8px;"></i> Vault Beta</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
       </div>
       <div class="room-card-btn" onclick="quickJoin('Vault Omega')">
-        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 6px;"></i> Vault Omega</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 8px;"></i> Vault Omega</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
       </div>
     </div>
   </div>
@@ -283,13 +341,17 @@
         </div>
         <span id="online-count" class="online-count">1 Online</span>
       </div>
-      <span id="my-alias" class="alias-badge"></span>
+
+      <div class="header-actions">
+        <button class="clear-btn" onclick="promptClearChat()"><i class="fa-solid fa-trash-can"></i> Clear All</button>
+        <span id="my-alias" class="alias-badge"></span>
+      </div>
     </div>
 
     <div id="messages-container"></div>
 
     <div class="chat-input-area">
-      <input type="text" id="message-input" placeholder="Type encrypted message..." autocomplete="off">
+      <input type="text" id="message-input" placeholder="Type message..." autocomplete="off">
       <button id="send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
@@ -383,6 +445,26 @@
       }
     }
 
+    // পাসওয়ার্ড দিয়ে সব চ্যাট ক্লিয়ার করার ফাংশন
+    async function promptClearChat() {
+      const pwd = prompt("Enter Master Password to delete all messages in this room:");
+      if (pwd === "ss43") {
+        const { error } = await supabaseClient
+          .from('room_messages')
+          .delete()
+          .eq('room_id', currentRoom);
+
+        if (!error) {
+          alert("All messages in this room have been cleared!");
+          loadMessages();
+        } else {
+          alert("Failed to clear messages: " + error.message);
+        }
+      } else if (pwd !== null) {
+        alert("Incorrect Password!");
+      }
+    }
+
     sendBtn.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
@@ -395,11 +477,13 @@
 
       if (error) return console.error(error);
 
-      const currentIds = new Set(data.map(m => `msg-${m.id}`));
-      
-      Array.from(messagesContainer.children).forEach(child => {
-        if (!currentIds.has(child.id)) child.remove();
-      });
+      // আগের মেসেজ ক্লিয়ার করা ও ওয়েলকাম নোট যোগ করা
+      messagesContainer.innerHTML = `
+        <div class="system-welcome-card">
+          <div class="welcome-title"><i class="fa-solid fa-shield-halved"></i> Kazim Nahiyan's CyberVault</div>
+          <div class="welcome-text">Welcome to the anonymous encrypted room! Messages here are secured and restricted.</div>
+        </div>
+      `;
 
       data.forEach(msg => appendMessage(msg));
     }
@@ -425,8 +509,7 @@
             appendMessage(payload.new);
             scrollToBottom();
           } else if (payload.eventType === 'DELETE') {
-            const el = document.getElementById(`msg-${payload.old.id}`);
-            if (el) el.remove();
+            loadMessages();
           }
         })
         .on('presence', { sync: () => {
@@ -477,8 +560,13 @@
       }
     });
 
-    window.addEventListener("blur", () => { document.body.style.filter = "blur(18px)"; });
-    window.addEventListener("focus", () => { document.body.style.filter = "none"; });
+    // স্ক্রিনশট এবং শর্টকাট ব্লক মেকানিজম
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'PrintScreen' || (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u'))) {
+        e.preventDefault();
+        alert('Screenshots & saving are restricted for security!');
+      }
+    });
   </script>
 </body>
 </html>
