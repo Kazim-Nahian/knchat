@@ -1,129 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secret Room Chat</title>
+  <title>CyberVault — Anonymous Chat</title>
+  
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- CSS Style (স্টাইলসমূহ এখানে আছে) -->
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
     body {
-      background-color: #0d1117;
-      color: #c9d1d9;
-      font-family: sans-serif;
+      background: radial-gradient(circle at top left, #0d1117, #010409);
+      color: #e6edf3;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
-      /* টেক্সট কপি ও সিলেক্ট করা বন্ধ */
+      min-height: 100vh;
+      overflow: hidden;
+      /* সিকিউরিটি: টেক্সট সিলেক্ট বন্ধ */
       -webkit-user-select: none;
       user-select: none;
     }
 
     .hidden { display: none !important; }
 
-    .card, #chat-screen {
-      background: #161b22;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      width: 350px;
+    /* গ্লাস কার্ড স্টাইল */
+    .app-card {
+      background: rgba(22, 27, 34, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      width: 100%;
+      max-width: 420px;
+      height: 600px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      animation: fadeIn 0.4s ease-out;
     }
 
-    #chat-screen { height: 450px; }
+    /* ১. লগইন / রুম জয়েন স্ক্রিন */
+    #auth-screen {
+      padding: 40px 30px;
+      text-align: center;
+      justify-content: center;
+    }
 
-    input {
-      background: #0d1117;
+    .brand-icon {
+      font-size: 50px;
+      color: #238636;
+      margin-bottom: 15px;
+      text-shadow: 0 0 20px rgba(35, 134, 54, 0.5);
+    }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      font-size: 13px;
+      color: #8b949e;
+      margin-bottom: 30px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8b949e;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      background: rgba(13, 17, 23, 0.8);
       border: 1px solid #30363d;
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
+      color: #fff;
+      padding: 14px 14px 14px 45px;
+      border-radius: 12px;
+      font-size: 14px;
       outline: none;
+      transition: all 0.3s;
     }
 
-    button {
-      background: #238636;
+    input[type="text"]:focus {
+      border-color: #238636;
+      box-shadow: 0 0 10px rgba(35, 134, 54, 0.3);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #238636, #2ea043);
       color: white;
       border: none;
-      padding: 10px;
-      border-radius: 5px;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
       cursor: pointer;
-      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
 
-    button:hover { background: #2ea043; }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(35, 134, 54, 0.4);
+    }
 
+    /* ২. চ্যাট স্ক্রিন */
     .chat-header {
+      padding: 18px 20px;
+      background: rgba(13, 17, 23, 0.6);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px solid #30363d;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-      font-size: 14px;
+      align-items: center;
     }
 
-    .badge { background: #30363d; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+    .room-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #2ea043;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #2ea043;
+    }
+
+    .room-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .alias-badge {
+      background: rgba(56, 139, 253, 0.15);
+      color: #58a6ff;
+      border: 1px solid rgba(56, 139, 253, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
 
     #messages-container {
       flex: 1;
+      padding: 20px;
       overflow-y: auto;
-      border: 1px solid #30363d;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 10px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
 
-    .message { background: #21262d; padding: 8px; border-radius: 5px; font-size: 14px; word-break: break-word; }
-    .message span { font-size: 11px; color: #8b949e; display: block; margin-bottom: 2px; }
+    /* মেসেজ বাবল ডিজাইন */
+    .message {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+      animation: popIn 0.3s ease-out;
+    }
 
-    .chat-input-area { display: flex; gap: 5px; }
-    .chat-input-area input { flex: 1; margin-bottom: 0; }
+    /* নিজের মেসেজ (ডানপাশে) */
+    .message.outgoing {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #1f6fed, #1158c7);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 12px rgba(31, 111, 237, 0.3);
+    }
+
+    /* অন্যের মেসেজ (বামপাশে) */
+    .message.incoming {
+      align-self: flex-start;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      border-bottom-left-radius: 4px;
+    }
+
+    .sender-tag {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: block;
+      opacity: 0.8;
+    }
+
+    .chat-input-area {
+      padding: 15px 20px;
+      background: rgba(13, 17, 23, 0.8);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      margin-bottom: 0;
+      padding-left: 15px;
+    }
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      background: #238636;
+      border: none;
+      color: white;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 16px;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover { background: #2ea043; }
+
+    /* কাস্টম স্ক্রলবার */
+    #messages-container::-webkit-scrollbar { width: 4px; }
+    #messages-container::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 <body>
 
-  <!-- ১. রুম এন্ট্রি স্ক্রিন -->
-  <div id="auth-screen" class="card">
-    <h2>🔒 Secret Room</h2>
-    <p>Enter any Room ID to start chatting anonymously.</p>
-    <input type="text" id="room-id-input" placeholder="Room ID (e.g. secret-101)">
-    <button id="join-btn">Enter Room</button>
+  <!-- ১. জয়েন স্ক্রিন -->
+  <div id="auth-screen" class="app-card">
+    <div class="brand-icon"><i class="fa-solid fa-user-shield"></i></div>
+    <div class="auth-title">CyberVault Chat</div>
+    <div class="auth-subtitle">End-to-End Anonymous & Disappearing Chat Room</div>
+    
+    <div class="input-group">
+      <i class="fa-solid fa-key"></i>
+      <input type="text" id="room-id-input" placeholder="Secret Room ID (e.g. shadow-7)" autocomplete="off">
+    </div>
+
+    <button id="join-btn" class="btn-primary">
+      <span>Enter Room</span>
+      <i class="fa-solid fa-arrow-right"></i>
+    </button>
   </div>
 
-  <!-- ২. চ্যাট রুম স্ক্রিন -->
-  <div id="chat-screen" class="hidden">
+  <!-- ২. চ্যাট স্ক্রিন -->
+  <div id="chat-screen" class="app-card hidden">
     <div class="chat-header">
-      <span id="room-title">Room: </span>
-      <span id="my-alias" class="badge"></span>
+      <div class="room-info">
+        <div class="status-dot"></div>
+        <span id="room-title" class="room-name">Room</span>
+      </div>
+      <span id="my-alias" class="alias-badge"></span>
     </div>
-    
+
     <div id="messages-container"></div>
 
     <div class="chat-input-area">
-      <input type="text" id="message-input" placeholder="Type a secure message...">
-      <button id="send-btn">Send</button>
+      <input type="text" id="message-input" placeholder="Type encrypted message..." autocomplete="off">
+      <button id="send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
   </div>
 
-  <!-- JavaScript Code (লজিকসমূহ এখানে আছে) -->
   <script>
-    // তোমার সুপাবেস কানেকশন
+    // Supabase Credentials
     const SUPABASE_URL = 'https://fchhellbumpddpwbcivy.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_D_XeR8Leo24comyoGp1lSg_wosM-_7c';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // র‍্যান্ডম ছদ্মনাম তৈরি (যেমন: Ghost-4821)
-    const prefixes = ["Ghost", "Shadow", "Cipher", "Phantom", "Agent"];
+    // Random Alias Generator
+    const prefixes = ["Ghost", "Cipher", "Phantom", "Shadow", "Vortex", "Agent", "Nexus"];
     const myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     let currentRoom = '';
@@ -141,14 +315,14 @@
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
 
-    // রুমে প্রবেশ করার লজিক
+    // Join Room
     joinBtn.addEventListener('click', () => {
       const roomId = roomIdInput.value.trim();
       if (!roomId) return alert("Please enter a Room ID!");
-      
+
       currentRoom = roomId;
-      roomTitle.innerText = `Room: ${roomId}`;
-      
+      roomTitle.innerText = roomId;
+
       authScreen.classList.add('hidden');
       chatScreen.classList.remove('hidden');
 
@@ -156,16 +330,16 @@
       subscribeToRoom();
     });
 
-    // মেসেজ পাঠানোর লজিক
+    // Send Message
     async function sendMessage() {
       const text = messageInput.value.trim();
       if (!text) return;
 
+      messageInput.value = '';
+
       await supabase.from('room_messages').insert([
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
-
-      messageInput.value = '';
     }
 
     sendBtn.addEventListener('click', sendMessage);
@@ -173,7 +347,7 @@
       if (e.key === 'Enter') sendMessage();
     });
 
-    // পুরনো মেসেজ লোড করা
+    // Load Previous Messages
     async function loadMessages() {
       const { data, error } = await supabase
         .from('room_messages')
@@ -182,13 +356,13 @@
         .order('created_at', { ascending: true });
 
       if (error) return console.error(error);
-      
+
       messagesContainer.innerHTML = '';
       data.forEach(msg => appendMessage(msg));
       scrollToBottom();
     }
 
-    // সুপাবেস রিয়েল-টাইম মেসেজ লিসেনার
+    // Realtime Listener
     function subscribeToRoom() {
       supabase
         .channel('room-channel')
@@ -204,10 +378,18 @@
         .subscribe();
     }
 
+    // Append Message to UI
     function appendMessage(msg) {
       const div = document.createElement('div');
-      div.classList.add('message');
-      div.innerHTML = `<span>${msg.sender_alias}</span>${msg.message_text}`;
+      const isMyMessage = msg.sender_alias === myAlias;
+
+      div.classList.add('message', isMyMessage ? 'outgoing' : 'incoming');
+
+      div.innerHTML = `
+        <span class="sender-tag">${isMyMessage ? 'You' : msg.sender_alias}</span>
+        ${escapeHTML(msg.message_text)}
+      `;
+
       messagesContainer.appendChild(div);
     }
 
@@ -215,9 +397,16 @@
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // সিকিউরিটি: ট্যাবের বাইরে গেলে পেজ ব্লার হয়ে যাবে
+    // Security: Escape HTML to prevent XSS
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+
+    // Security Feature: Panic Blur on Tab Change
     window.addEventListener("blur", () => {
-      document.body.style.filter = "blur(15px)";
+      document.body.style.filter = "blur(18px)";
     });
     window.addEventListener("focus", () => {
       document.body.style.filter = "none";
