@@ -7,7 +7,6 @@
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -40,7 +39,7 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
       width: 100%;
       max-width: 420px;
-      height: 600px;
+      height: 620px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -48,84 +47,91 @@
     }
 
     #auth-screen {
-      padding: 40px 30px;
+      padding: 30px 25px;
       text-align: center;
       justify-content: center;
+      overflow-y: auto;
     }
 
     .brand-icon {
-      font-size: 50px;
+      font-size: 45px;
       color: #238636;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       text-shadow: 0 0 20px rgba(35, 134, 54, 0.5);
     }
 
-    .auth-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
+    .auth-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .auth-subtitle { font-size: 12px; color: #8b949e; margin-bottom: 20px; }
 
-    .auth-subtitle {
-      font-size: 13px;
-      color: #8b949e;
-      margin-bottom: 30px;
-    }
-
-    .input-group {
-      position: relative;
-      margin-bottom: 20px;
-    }
-
-    .input-group i {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #8b949e;
-    }
+    .input-group { position: relative; margin-bottom: 15px; }
+    .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #8b949e; }
 
     input[type="text"] {
       width: 100%;
       background: rgba(13, 17, 23, 0.8);
       border: 1px solid #30363d;
       color: #fff;
-      padding: 14px 14px 14px 45px;
+      padding: 12px 12px 12px 42px;
       border-radius: 12px;
       font-size: 14px;
       outline: none;
       transition: all 0.3s;
     }
 
-    input[type="text"]:focus {
-      border-color: #238636;
-      box-shadow: 0 0 10px rgba(35, 134, 54, 0.3);
-    }
+    input[type="text"]:focus { border-color: #238636; box-shadow: 0 0 10px rgba(35, 134, 54, 0.3); }
 
     .btn-primary {
       width: 100%;
       background: linear-gradient(135deg, #238636, #2ea043);
       color: white;
       border: none;
-      padding: 14px;
+      padding: 12px;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
+      margin-bottom: 20px;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(35, 134, 54, 0.4);
+    /* Built-in Rooms Section */
+    .admin-rooms-title {
+      font-size: 12px;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      text-align: left;
     }
 
+    .admin-rooms-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .room-card-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #c9d1d9;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .room-card-btn:hover { background: rgba(35, 134, 54, 0.15); border-color: #238636; }
+
+    /* Chat Screen */
     .chat-header {
-      padding: 18px 20px;
+      padding: 15px 18px;
       background: rgba(13, 17, 23, 0.6);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
@@ -133,24 +139,11 @@
       align-items: center;
     }
 
-    .room-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #2ea043;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #2ea043;
-    }
-
-    .room-name {
-      font-weight: 600;
-      font-size: 15px;
-    }
+    .room-info { display: flex; flex-direction: column; gap: 2px; }
+    .room-name-container { display: flex; align-items: center; gap: 8px; }
+    .status-dot { width: 8px; height: 8px; background-color: #2ea043; border-radius: 50%; box-shadow: 0 0 8px #2ea043; }
+    .room-name { font-weight: 600; font-size: 15px; }
+    .online-count { font-size: 11px; color: #8b949e; }
 
     .alias-badge {
       background: rgba(56, 139, 253, 0.15);
@@ -164,29 +157,29 @@
 
     #messages-container {
       flex: 1;
-      padding: 20px;
+      padding: 18px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .message {
-      max-width: 75%;
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-size: 14px;
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13.5px;
       line-height: 1.4;
       word-break: break-word;
-      animation: popIn 0.3s ease-out;
+      position: relative;
+      animation: popIn 0.2s ease-out;
     }
 
     .message.outgoing {
       align-self: flex-end;
       background: linear-gradient(135deg, #1f6fed, #1158c7);
       color: #fff;
-      border-bottom-right-radius: 4px;
-      box-shadow: 0 4px 12px rgba(31, 111, 237, 0.3);
+      border-bottom-right-radius: 3px;
     }
 
     .message.incoming {
@@ -194,34 +187,36 @@
       background: #21262d;
       border: 1px solid #30363d;
       color: #c9d1d9;
-      border-bottom-left-radius: 4px;
+      border-bottom-left-radius: 3px;
     }
 
-    .sender-tag {
-      font-size: 11px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      display: block;
-      opacity: 0.8;
+    .sender-tag { font-size: 10.5px; font-weight: 700; margin-bottom: 3px; display: block; opacity: 0.8; }
+
+    /* Unsend Button */
+    .unsend-btn {
+      font-size: 10px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4px;
+      display: inline-block;
+      cursor: pointer;
+      text-align: right;
+      width: 100%;
     }
+    .unsend-btn:hover { color: #ff7b72; text-decoration: underline; }
 
     .chat-input-area {
-      padding: 15px 20px;
+      padding: 12px 18px;
       background: rgba(13, 17, 23, 0.8);
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .chat-input-area input {
-      flex: 1;
-      margin-bottom: 0;
-      padding-left: 15px;
-    }
+    .chat-input-area input { flex: 1; margin-bottom: 0; padding-left: 14px; }
 
     .send-btn {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       background: #238636;
       border: none;
       color: white;
@@ -230,17 +225,14 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 16px;
-      transition: background 0.2s;
+      font-size: 15px;
     }
-
-    .send-btn:hover { background: #2ea043; }
 
     #messages-container::-webkit-scrollbar { width: 4px; }
     #messages-container::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
@@ -249,25 +241,45 @@
   <div id="auth-screen" class="app-card">
     <div class="brand-icon"><i class="fa-solid fa-user-shield"></i></div>
     <div class="auth-title">CyberVault Chat</div>
-    <div class="auth-subtitle">End-to-End Anonymous & Disappearing Chat Room</div>
+    <div class="auth-subtitle">End-to-End Anonymous Chat Room</div>
     
     <div class="input-group">
       <i class="fa-solid fa-key"></i>
-      <input type="text" id="room-id-input" placeholder="Secret Room ID (e.g. shadow-7)" autocomplete="off">
+      <input type="text" id="room-id-input" placeholder="Secret Room ID" autocomplete="off">
     </div>
 
     <button id="join-btn" class="btn-primary">
-      <span>Enter Room</span>
+      <span>Enter Custom Room</span>
       <i class="fa-solid fa-arrow-right"></i>
     </button>
+
+    <!-- Built-in Secret Rooms (Only ID Known to Admin) -->
+    <div class="admin-rooms-title">Built-in Vault Rooms</div>
+    <div class="admin-rooms-grid">
+      <div class="room-card-btn" onclick="quickJoin('Vault Alpha')">
+        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 6px;"></i> Vault Alpha</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+      </div>
+      <div class="room-card-btn" onclick="quickJoin('Vault Beta')">
+        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 6px;"></i> Vault Beta</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+      </div>
+      <div class="room-card-btn" onclick="quickJoin('Vault Omega')">
+        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 6px;"></i> Vault Omega</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+      </div>
+    </div>
   </div>
 
   <!-- ২. চ্যাট স্ক্রিন -->
   <div id="chat-screen" class="app-card hidden">
     <div class="chat-header">
       <div class="room-info">
-        <div class="status-dot"></div>
-        <span id="room-title" class="room-name">Room</span>
+        <div class="room-name-container">
+          <div class="status-dot"></div>
+          <span id="room-title" class="room-name">Room</span>
+        </div>
+        <span id="online-count" class="online-count">1 Online</span>
       </div>
       <span id="my-alias" class="alias-badge"></span>
     </div>
@@ -289,6 +301,7 @@
     const myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     let currentRoom = '';
+    let roomChannel = null;
 
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
@@ -299,8 +312,14 @@
     const messagesContainer = document.getElementById('messages-container');
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
+    const onlineCountSpan = document.getElementById('online-count');
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
+
+    function quickJoin(roomName) {
+      roomIdInput.value = roomName;
+      enterRoom();
+    }
 
     function enterRoom() {
       const roomId = roomIdInput.value.trim();
@@ -319,9 +338,7 @@
     }
 
     joinBtn.addEventListener('click', enterRoom);
-    roomIdInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') enterRoom();
-    });
+    roomIdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') enterRoom(); });
 
     async function sendMessage() {
       const text = messageInput.value.trim();
@@ -329,21 +346,28 @@
 
       messageInput.value = '';
 
-      // ডাটাবেজে পাঠানো
-      const { error } = await supabaseClient.from('room_messages').insert([
+      await supabaseClient.from('room_messages').insert([
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
+    }
 
-      if (error) {
-        console.error("Error sending message:", error);
-        alert("মেসেজ পাঠাতে সমস্যা হচ্ছে! Supabase-এ RLS বন্ধ করেছেন কি?");
+    // Unsend Message Logic
+    async function unsendMessage(msgId) {
+      if (!confirm("Unsend this message?")) return;
+      
+      const { error } = await supabaseClient
+        .from('room_messages')
+        .delete()
+        .eq('id', msgId);
+
+      if (!error) {
+        const el = document.getElementById(`msg-${msgId}`);
+        if (el) el.remove();
       }
     }
 
     sendBtn.addEventListener('click', sendMessage);
-    messageInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
+    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
     async function loadMessages() {
       const { data, error } = await supabaseClient
@@ -359,38 +383,62 @@
       scrollToBottom();
     }
 
+    // Smooth Real-time & Live Online Presence Tracker Fix
     function subscribeToRoom() {
-      supabaseClient
-        .channel('room-channel')
+      if (roomChannel) supabaseClient.removeChannel(roomChannel);
+
+      roomChannel = supabaseClient.channel(`room:${currentRoom}`, {
+        config: { presence: { key: myAlias } }
+      });
+
+      roomChannel
+        // 1. Database Insert/Delete Real-time Listener
         .on('postgres_changes', {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'room_messages',
           filter: `room_id=eq.${currentRoom}`
         }, payload => {
-          appendMessage(payload.new);
-          scrollToBottom();
+          if (payload.eventType === 'INSERT') {
+            appendMessage(payload.new);
+            scrollToBottom();
+          } else if (payload.eventType === 'DELETE') {
+            const el = document.getElementById(`msg-${payload.old.id}`);
+            if (el) el.remove();
+          }
         })
-        .subscribe();
+        // 2. Live Online Presence Counter
+        .on('presence', { sync: () => {
+          const state = roomChannel.presenceState();
+          const count = Object.keys(state).length;
+          onlineCountSpan.innerText = `${count} Online`;
+        }})
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await roomChannel.track({ online_at: new Date().toISOString() });
+          }
+        });
     }
 
     function appendMessage(msg) {
+      if (document.getElementById(`msg-${msg.id}`)) return; // Duplicate Prevent
+
       const div = document.createElement('div');
       const isMyMessage = msg.sender_alias === myAlias;
 
+      div.id = `msg-${msg.id}`;
       div.classList.add('message', isMyMessage ? 'outgoing' : 'incoming');
 
       div.innerHTML = `
         <span class="sender-tag">${isMyMessage ? 'You' : msg.sender_alias}</span>
         ${escapeHTML(msg.message_text)}
+        ${isMyMessage ? `<div class="unsend-btn" onclick="unsendMessage('${msg.id}')"><i class="fa-solid fa-trash"></i> Unsend</div>` : ''}
       `;
 
       messagesContainer.appendChild(div);
     }
 
-    function scrollToBottom() {
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+    function scrollToBottom() { messagesContainer.scrollTop = messagesContainer.scrollHeight; }
 
     function escapeHTML(str) {
       return str.replace(/[&<>'"]/g, 
@@ -398,12 +446,8 @@
       );
     }
 
-    window.addEventListener("blur", () => {
-      document.body.style.filter = "blur(18px)";
-    });
-    window.addEventListener("focus", () => {
-      document.body.style.filter = "none";
-    });
+    window.addEventListener("blur", () => { document.body.style.filter = "blur(18px)"; });
+    window.addEventListener("focus", () => { document.body.style.filter = "none"; });
   </script>
 </body>
 </html>
