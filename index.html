@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Room Chat</title>
+  
+  <!-- Supabase JS Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- CSS Style (স্টাইলসমূহ এখানে আছে) -->
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #c9d1d9;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      /* টেক্সট কপি ও সিলেক্ট করা বন্ধ */
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .hidden { display: none !important; }
+
+    .card, #chat-screen {
+      background: #161b22;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #chat-screen { height: 450px; }
+
+    input {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    button {
+      background: #238636;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover { background: #2ea043; }
+
+    .chat-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .badge { background: #30363d; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+    #messages-container {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #30363d;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .message { background: #21262d; padding: 8px; border-radius: 5px; font-size: 14px; word-break: break-word; }
+    .message span { font-size: 11px; color: #8b949e; display: block; margin-bottom: 2px; }
+
+    .chat-input-area { display: flex; gap: 5px; }
+    .chat-input-area input { flex: 1; margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- ১. রুম এন্ট্রি স্ক্রিন -->
+  <div id="auth-screen" class="card">
+    <h2>🔒 Secret Room</h2>
+    <p>Enter any Room ID to start chatting anonymously.</p>
+    <input type="text" id="room-id-input" placeholder="Room ID (e.g. secret-101)">
+    <button id="join-btn">Enter Room</button>
+  </div>
+
+  <!-- ২. চ্যাট রুম স্ক্রিন -->
+  <div id="chat-screen" class="hidden">
+    <div class="chat-header">
+      <span id="room-title">Room: </span>
+      <span id="my-alias" class="badge"></span>
+    </div>
+    
+    <div id="messages-container"></div>
+
+    <div class="chat-input-area">
+      <input type="text" id="message-input" placeholder="Type a secure message...">
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <!-- JavaScript Code (লজিকসমূহ এখানে আছে) -->
+  <script>
+    // তোমার সুপাবেস কানেকশন
+    const SUPABASE_URL = 'https://fchhellbumpddpwbcivy.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_D_XeR8Leo24comyoGp1lSg_wosM-_7c';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // র‍্যান্ডম ছদ্মনাম তৈরি (যেমন: Ghost-4821)
+    const prefixes = ["Ghost", "Shadow", "Cipher", "Phantom", "Agent"];
+    const myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    let currentRoom = '';
+
+    // DOM Elements
+    const authScreen = document.getElementById('auth-screen');
+    const chatScreen = document.getElementById('chat-screen');
+    const roomIdInput = document.getElementById('room-id-input');
+    const joinBtn = document.getElementById('join-btn');
+    const roomTitle = document.getElementById('room-title');
+    const myAliasSpan = document.getElementById('my-alias');
+    const messagesContainer = document.getElementById('messages-container');
+    const messageInput = document.getElementById('message-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    if (myAliasSpan) myAliasSpan.innerText = myAlias;
+
+    // রুমে প্রবেশ করার লজিক
+    joinBtn.addEventListener('click', () => {
+      const roomId = roomIdInput.value.trim();
+      if (!roomId) return alert("Please enter a Room ID!");
+      
+      currentRoom = roomId;
+      roomTitle.innerText = `Room: ${roomId}`;
+      
+      authScreen.classList.add('hidden');
+      chatScreen.classList.remove('hidden');
+
+      loadMessages();
+      subscribeToRoom();
+    });
+
+    // মেসেজ পাঠানোর লজিক
+    async function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      await supabase.from('room_messages').insert([
+        { room_id: currentRoom, sender_alias: myAlias, message_text: text }
+      ]);
+
+      messageInput.value = '';
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // পুরনো মেসেজ লোড করা
+    async function loadMessages() {
+      const { data, error } = await supabase
+        .from('room_messages')
+        .select('*')
+        .eq('room_id', currentRoom)
+        .order('created_at', { ascending: true });
+
+      if (error) return console.error(error);
+      
+      messagesContainer.innerHTML = '';
+      data.forEach(msg => appendMessage(msg));
+      scrollToBottom();
+    }
+
+    // সুপাবেস রিয়েল-টাইম মেসেজ লিসেনার
+    function subscribeToRoom() {
+      supabase
+        .channel('room-channel')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'room_messages',
+          filter: `room_id=eq.${currentRoom}`
+        }, payload => {
+          appendMessage(payload.new);
+          scrollToBottom();
+        })
+        .subscribe();
+    }
+
+    function appendMessage(msg) {
+      const div = document.createElement('div');
+      div.classList.add('message');
+      div.innerHTML = `<span>${msg.sender_alias}</span>${msg.message_text}`;
+      messagesContainer.appendChild(div);
+    }
+
+    function scrollToBottom() {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // সিকিউরিটি: ট্যাবের বাইরে গেলে পেজ ব্লার হয়ে যাবে
+    window.addEventListener("blur", () => {
+      document.body.style.filter = "blur(15px)";
+    });
+    window.addEventListener("focus", () => {
+      document.body.style.filter = "none";
+    });
+  </script>
+</body>
+</html>
