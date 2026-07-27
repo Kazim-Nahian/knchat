@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CyberVault — Anonymous Chat</title>
   
+  <!-- PWA Theme Color -->
+  <meta name="theme-color" content="#0d1117">
+
+  <!-- Inline Manifest for PWABuilder -->
+  <link rel="manifest" href='data:application/json,{"short_name":"CyberVault","name":"CyberVault Anonymous Chat","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2092/2092663.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2092/2092663.png","sizes":"512x512","type":"image/png"}],"start_url":"/","background_color":"#0d1117","theme_color":"#238636","display":"standalone"}'>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -289,6 +295,16 @@
   </div>
 
   <script>
+    // Inline Service Worker Registration for PWABuilder
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', e => self.skipWaiting());
+        self.addEventListener('fetch', e => {});
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+    }
+
     const SUPABASE_URL = 'https://fchhellbumpddpwbcivy.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_D_XeR8Leo24comyoGp1lSg_wosM-_7c';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -332,7 +348,6 @@
         loadMessages();
         subscribeToRoom();
 
-        // 3 Seconds Fallback Polling (ensure no dropped message)
         if (pollInterval) clearInterval(pollInterval);
         pollInterval = setInterval(loadMessages, 3000);
       }
@@ -351,7 +366,6 @@
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
 
-      // Instant fetch for local speed
       loadMessages();
     }
 
@@ -381,15 +395,12 @@
 
       if (error) return console.error(error);
 
-      // Simple sync check
       const currentIds = new Set(data.map(m => `msg-${m.id}`));
       
-      // Remove deleted messages in DOM
       Array.from(messagesContainer.children).forEach(child => {
         if (!currentIds.has(child.id)) child.remove();
       });
 
-      // Append new messages
       data.forEach(msg => appendMessage(msg));
     }
 
@@ -459,7 +470,6 @@
       );
     }
 
-    // Tab Focus Auto Reconnect
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible" && currentRoom) {
         loadMessages();
