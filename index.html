@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CyberVault — Anonymous Chat</title>
   
-  <!-- FontAwesome Icons & Google Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- Supabase JS Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -28,14 +26,12 @@
       align-items: center;
       min-height: 100vh;
       overflow: hidden;
-      /* সিকিউরিটি: টেক্সট সিলেক্ট বন্ধ */
       -webkit-user-select: none;
       user-select: none;
     }
 
     .hidden { display: none !important; }
 
-    /* গ্লাস কার্ড স্টাইল */
     .app-card {
       background: rgba(22, 27, 34, 0.75);
       backdrop-filter: blur(16px);
@@ -51,7 +47,6 @@
       animation: fadeIn 0.4s ease-out;
     }
 
-    /* ১. লগইন / রুম জয়েন স্ক্রিন */
     #auth-screen {
       padding: 40px 30px;
       text-align: center;
@@ -129,7 +124,6 @@
       box-shadow: 0 8px 20px rgba(35, 134, 54, 0.4);
     }
 
-    /* ২. চ্যাট স্ক্রিন */
     .chat-header {
       padding: 18px 20px;
       background: rgba(13, 17, 23, 0.6);
@@ -177,7 +171,6 @@
       gap: 12px;
     }
 
-    /* মেসেজ বাবল ডিজাইন */
     .message {
       max-width: 75%;
       padding: 12px 16px;
@@ -188,7 +181,6 @@
       animation: popIn 0.3s ease-out;
     }
 
-    /* নিজের মেসেজ (ডানপাশে) */
     .message.outgoing {
       align-self: flex-end;
       background: linear-gradient(135deg, #1f6fed, #1158c7);
@@ -197,7 +189,6 @@
       box-shadow: 0 4px 12px rgba(31, 111, 237, 0.3);
     }
 
-    /* অন্যের মেসেজ (বামপাশে) */
     .message.incoming {
       align-self: flex-start;
       background: #21262d;
@@ -245,7 +236,6 @@
 
     .send-btn:hover { background: #2ea043; }
 
-    /* কাস্টম স্ক্রলবার */
     #messages-container::-webkit-scrollbar { width: 4px; }
     #messages-container::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
 
@@ -291,18 +281,15 @@
   </div>
 
   <script>
-    // Supabase Credentials (Fixed variable name conflict)
     const SUPABASE_URL = 'https://fchhellbumpddpwbcivy.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_D_XeR8Leo24comyoGp1lSg_wosM-_7c';
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
-    // Random Alias Generator
     const prefixes = ["Ghost", "Cipher", "Phantom", "Shadow", "Vortex", "Agent", "Nexus"];
     const myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     let currentRoom = '';
 
-    // DOM Elements
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
     const roomIdInput = document.getElementById('room-id-input');
@@ -315,8 +302,7 @@
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
 
-    // Join Room
-    joinBtn.addEventListener('click', () => {
+    function enterRoom() {
       const roomId = roomIdInput.value.trim();
       if (!roomId) return alert("Please enter a Room ID!");
 
@@ -326,20 +312,32 @@
       authScreen.classList.add('hidden');
       chatScreen.classList.remove('hidden');
 
-      loadMessages();
-      subscribeToRoom();
+      if (supabaseClient) {
+        loadMessages();
+        subscribeToRoom();
+      }
+    }
+
+    joinBtn.addEventListener('click', enterRoom);
+    roomIdInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') enterRoom();
     });
 
-    // Send Message
     async function sendMessage() {
       const text = messageInput.value.trim();
-      if (!text) return;
+      if (!text || !supabaseClient) return;
 
       messageInput.value = '';
 
-      await supabaseClient.from('room_messages').insert([
+      // ডাটাবেজে পাঠানো
+      const { error } = await supabaseClient.from('room_messages').insert([
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
+
+      if (error) {
+        console.error("Error sending message:", error);
+        alert("মেসেজ পাঠাতে সমস্যা হচ্ছে! Supabase-এ RLS বন্ধ করেছেন কি?");
+      }
     }
 
     sendBtn.addEventListener('click', sendMessage);
@@ -347,7 +345,6 @@
       if (e.key === 'Enter') sendMessage();
     });
 
-    // Load Previous Messages
     async function loadMessages() {
       const { data, error } = await supabaseClient
         .from('room_messages')
@@ -362,7 +359,6 @@
       scrollToBottom();
     }
 
-    // Realtime Listener
     function subscribeToRoom() {
       supabaseClient
         .channel('room-channel')
@@ -378,7 +374,6 @@
         .subscribe();
     }
 
-    // Append Message to UI
     function appendMessage(msg) {
       const div = document.createElement('div');
       const isMyMessage = msg.sender_alias === myAlias;
@@ -397,14 +392,12 @@
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-    // Security: Escape HTML to prevent XSS
     function escapeHTML(str) {
       return str.replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
       );
     }
 
-    // Security Feature: Panic Blur on Tab Change
     window.addEventListener("blur", () => {
       document.body.style.filter = "blur(18px)";
     });
