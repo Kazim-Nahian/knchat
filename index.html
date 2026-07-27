@@ -97,7 +97,6 @@
       margin-bottom: 20px;
     }
 
-    /* Built-in Rooms Section */
     .admin-rooms-title {
       font-size: 12px;
       color: #8b949e;
@@ -129,7 +128,6 @@
 
     .room-card-btn:hover { background: rgba(35, 134, 54, 0.15); border-color: #238636; }
 
-    /* Chat Screen */
     .chat-header {
       padding: 15px 18px;
       background: rgba(13, 17, 23, 0.6);
@@ -192,7 +190,6 @@
 
     .sender-tag { font-size: 10.5px; font-weight: 700; margin-bottom: 3px; display: block; opacity: 0.8; }
 
-    /* Unsend Button */
     .unsend-btn {
       font-size: 10px;
       color: rgba(255, 255, 255, 0.6);
@@ -253,7 +250,6 @@
       <i class="fa-solid fa-arrow-right"></i>
     </button>
 
-    <!-- Built-in Secret Rooms (Only ID Known to Admin) -->
     <div class="admin-rooms-title">Built-in Vault Rooms</div>
     <div class="admin-rooms-grid">
       <div class="room-card-btn" onclick="quickJoin('Vault Alpha')">
@@ -302,6 +298,7 @@
 
     let currentRoom = '';
     let roomChannel = null;
+    let pollInterval = null;
 
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
@@ -334,6 +331,10 @@
       if (supabaseClient) {
         loadMessages();
         subscribeToRoom();
+
+        // 3 Seconds Fallback Polling (ensure no dropped message)
+        if (pollInterval) clearInterval(pollInterval);
+        pollInterval = setInterval(loadMessages, 3000);
       }
     }
 
@@ -349,9 +350,11 @@
       await supabaseClient.from('room_messages').insert([
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
+
+      // Instant fetch for local speed
+      loadMessages();
     }
 
-    // Unsend Message Logic
     async function unsendMessage(msgId) {
       if (!confirm("Unsend this message?")) return;
       
@@ -378,21 +381,29 @@
 
       if (error) return console.error(error);
 
-      messagesContainer.innerHTML = '';
+      // Simple sync check
+      const currentIds = new Set(data.map(m => `msg-${m.id}`));
+      
+      // Remove deleted messages in DOM
+      Array.from(messagesContainer.children).forEach(child => {
+        if (!currentIds.has(child.id)) child.remove();
+      });
+
+      // Append new messages
       data.forEach(msg => appendMessage(msg));
-      scrollToBottom();
     }
 
-    // Smooth Real-time & Live Online Presence Tracker Fix
     function subscribeToRoom() {
       if (roomChannel) supabaseClient.removeChannel(roomChannel);
 
-      roomChannel = supabaseClient.channel(`room:${currentRoom}`, {
-        config: { presence: { key: myAlias } }
+      roomChannel = supabaseClient.channel(`room_${currentRoom}_${Date.now()}`, {
+        config: { 
+          presence: { key: myAlias },
+          broadcast: { self: true }
+        }
       });
 
       roomChannel
-        // 1. Database Insert/Delete Real-time Listener
         .on('postgres_changes', {
           event: '*',
           schema: 'public',
@@ -407,7 +418,6 @@
             if (el) el.remove();
           }
         })
-        // 2. Live Online Presence Counter
         .on('presence', { sync: () => {
           const state = roomChannel.presenceState();
           const count = Object.keys(state).length;
@@ -416,12 +426,14 @@
         .subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
             await roomChannel.track({ online_at: new Date().toISOString() });
+          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+            setTimeout(subscribeToRoom, 1000);
           }
         });
     }
 
     function appendMessage(msg) {
-      if (document.getElementById(`msg-${msg.id}`)) return; // Duplicate Prevent
+      if (document.getElementById(`msg-${msg.id}`)) return;
 
       const div = document.createElement('div');
       const isMyMessage = msg.sender_alias === myAlias;
@@ -436,6 +448,7 @@
       `;
 
       messagesContainer.appendChild(div);
+      scrollToBottom();
     }
 
     function scrollToBottom() { messagesContainer.scrollTop = messagesContainer.scrollHeight; }
@@ -445,6 +458,14 @@
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
       );
     }
+
+    // Tab Focus Auto Reconnect
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && currentRoom) {
+        loadMessages();
+        subscribeToRoom();
+      }
+    });
 
     window.addEventListener("blur", () => { document.body.style.filter = "blur(18px)"; });
     window.addEventListener("focus", () => { document.body.style.filter = "none"; });
