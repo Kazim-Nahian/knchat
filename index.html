@@ -5,15 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>KNChat — Private. Secure. Yours.</title>
   
-  <!-- Direct Image Proxy for Favicon / Search Bar Icon -->
   <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
   <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
-
-  <!-- PWA Theme Color -->
   <meta name="theme-color" content="#07090e">
-
-  <!-- Inline Manifest -->
-  <link rel="manifest" href='data:application/json,{"short_name":"KNChat","name":"KNChat Private Messenger","icons":[{"src":"https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO","sizes":"192x192","type":"image/png"},{"src":"https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO","sizes":"512x512","type":"image/png"}],"start_url":"/","background_color":"#07090e","theme_color":"#0088ff","display":"standalone"}'>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,7 +32,6 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-user-select: none;
       user-select: none;
-      -webkit-touch-callout: none;
     }
 
     body, html {
@@ -105,15 +98,8 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.3s ease;
     }
 
-    .admin-btn-home:hover {
-      background: rgba(139, 47, 201, 0.3);
-      box-shadow: 0 0 12px rgba(139, 47, 201, 0.4);
-    }
-
-    /* Clean & Sharp Logo Container */
     .logo-wrapper {
       width: 120px;
       height: 120px;
@@ -137,7 +123,6 @@
       50% { transform: translateY(-5px); }
     }
 
-    /* Title Balanced Styling */
     .auth-title { 
       font-size: 30px; 
       font-weight: 800; 
@@ -148,14 +133,8 @@
       align-items: center;
     }
 
-    .title-kn {
-      color: #0088ff;
-    }
-
-    .title-chat {
-      color: #ffffff;
-      opacity: 0.95;
-    }
+    .title-kn { color: #0088ff; }
+    .title-chat { color: #ffffff; opacity: 0.95; }
     
     .auth-subtitle { 
       font-size: 10px; 
@@ -178,7 +157,6 @@
       border-radius: 16px;
       font-size: 14px;
       outline: none;
-      transition: all 0.3s;
       -webkit-user-select: text;
       user-select: text;
     }
@@ -204,10 +182,7 @@
       gap: 10px;
       margin-bottom: 24px;
       box-shadow: 0 8px 20px rgba(0, 136, 255, 0.25);
-      transition: all 0.3s;
     }
-
-    .btn-primary:active { transform: scale(0.98); }
 
     .admin-rooms-title {
       font-size: 11px;
@@ -232,42 +207,44 @@
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
-    .room-card-btn:hover {
-      background: rgba(0, 136, 255, 0.08);
-      border-color: rgba(0, 136, 255, 0.3);
-    }
-
+    /* Chat Header with Back Button */
     .chat-header {
-      padding: 14px 18px;
+      padding: 12px 16px;
       background: rgba(10, 13, 20, 0.9);
       border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
     }
+
+    .header-left { display: flex; align-items: center; gap: 12px; }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .back-btn:active { transform: scale(0.92); }
 
     .room-info { display: flex; flex-direction: column; gap: 2px; }
     .room-name-container { display: flex; align-items: center; gap: 8px; }
     .status-dot { width: 8px; height: 8px; background-color: #0088ff; border-radius: 50%; box-shadow: 0 0 8px #0088ff; }
-    .room-name { font-weight: 700; font-size: 16px; }
+    .room-name { font-weight: 700; font-size: 15px; }
     .online-count { font-size: 11px; color: var(--text-muted); }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-corner-logo {
-      width: 36px;
-      height: 36px;
-      object-fit: contain;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
-    }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
 
     .clear-btn {
       background: rgba(248, 81, 73, 0.12);
@@ -278,16 +255,13 @@
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
 
     .alias-badge {
       background: rgba(0, 136, 255, 0.12);
       color: var(--accent-blue);
       border: 1px solid rgba(0, 136, 255, 0.3);
-      padding: 5px 12px;
+      padding: 5px 10px;
       border-radius: 20px;
       font-size: 11px;
       font-weight: 700;
@@ -306,6 +280,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      scroll-behavior: smooth;
     }
 
     .system-welcome-card {
@@ -392,12 +367,9 @@
       align-items: center;
       font-size: 16px;
       box-shadow: 0 4px 15px rgba(139, 47, 201, 0.3);
-      transition: all 0.2s;
     }
 
-    .send-btn:active { transform: scale(0.95); }
-
-    /* Modal Styles */
+    /* Modal & Notification Toggle */
     .modal-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -427,13 +399,60 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 10px;
     }
 
     .modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
     .close-modal-btn { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+
+    /* Switch Slide Toggle */
+    .notify-toggle-box {
+      background: rgba(139, 47, 201, 0.1);
+      border: 1px solid rgba(139, 47, 201, 0.3);
+      padding: 12px 14px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .notify-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #e6edf3; }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input { opacity: 0; width: 0; height: 0; }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #2a3042;
+      transition: .3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider { background: var(--gradient-primary); }
+    input:checked + .slider:before { transform: translateX(20px); }
 
     .room-list-container {
       overflow-y: auto;
@@ -454,7 +473,6 @@
     }
 
     .admin-room-name { font-size: 13px; font-weight: 600; color: #e6edf3; }
-
     .admin-item-actions { display: flex; gap: 6px; }
 
     .btn-small-join {
@@ -491,12 +509,10 @@
       <button class="admin-btn-home" onclick="openAdminPanel()"><i class="fa-solid fa-user-gear"></i> Admin</button>
     </div>
 
-    <!-- Clean Logo Section -->
     <div class="logo-wrapper">
       <img src="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO" alt="KNChat Logo" class="main-logo-img">
     </div>
     
-    <!-- Title & Developer Credit -->
     <div class="auth-title">
       <span class="title-kn">KN</span><span class="title-chat">Chat</span>
     </div>
@@ -529,34 +545,51 @@
     </div>
   </div>
 
-  <!-- ২. অ্যাডমিন মডাল -->
+  <!-- ২. অ্যাডমিন প্যানেল মডাল -->
   <div id="admin-modal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-list-check"></i> Active Vault Rooms</div>
+        <div class="modal-title"><i class="fa-solid fa-user-shield"></i> Admin Control Vault</div>
         <button class="close-modal-btn" onclick="closeAdminPanel()"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div id="admin-room-list" class="room-list-container">
-        <!-- Javascript populated -->
+
+      <!-- Notification Slide Toggle -->
+      <div class="notify-toggle-box">
+        <div class="notify-info">
+          <i class="fa-solid fa-bell" style="color:#c084fc;"></i>
+          <span>Global Live Notifications</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="admin-notify-toggle" onchange="toggleAdminNotifications(this.checked)">
+          <span class="slider"></span>
+        </label>
       </div>
+
+      <div id="admin-room-list" class="room-list-container"></div>
     </div>
   </div>
 
   <!-- ৩. চ্যাট স্ক্রিন -->
   <div id="chat-screen" class="app-card hidden">
     <div class="chat-header">
-      <div class="room-info">
-        <div class="room-name-container">
-          <div class="status-dot"></div>
-          <span id="room-title" class="room-name">Room</span>
+      <div class="header-left">
+        <!-- Home Back Button -->
+        <button class="back-btn" onclick="goHome()" title="Back to Home">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div class="room-info">
+          <div class="room-name-container">
+            <div class="status-dot"></div>
+            <span id="room-title" class="room-name">Room</span>
+          </div>
+          <span id="online-count" class="online-count">1 Online</span>
         </div>
-        <span id="online-count" class="online-count">1 Online</span>
       </div>
 
       <div class="header-actions">
         <button class="clear-btn" onclick="promptClearChat()"><i class="fa-solid fa-trash-can"></i> Clear</button>
         <span id="my-alias" class="alias-badge"></span>
-        <img src="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO" alt="KNChat" class="header-corner-logo">
       </div>
     </div>
 
@@ -569,15 +602,6 @@
   </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      const swCode = `
-        self.addEventListener('install', e => self.skipWaiting());
-        self.addEventListener('fetch', e => {});
-      `;
-      const blob = new Blob([swCode], { type: 'application/javascript' });
-      navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-    }
-
     const SUPABASE_URL = 'https://fchhellbumpddpwbcivy.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_D_XeR8Leo24comyoGp1lSg_wosM-_7c';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
@@ -585,10 +609,12 @@
     const prefixes = ["Ghost", "Cipher", "Phantom", "Shadow", "Vortex", "Agent", "Nexus"];
     let myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
     let isAdminUser = false;
+    let notificationsEnabled = false;
+    let globalAdminChannel = null;
 
     let currentRoom = '';
     let roomChannel = null;
-    let pollInterval = null;
+    let isUserScrolledUp = false;
 
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
@@ -604,6 +630,13 @@
     const adminRoomList = document.getElementById('admin-room-list');
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
+
+    // Detect Scroll State so user isn't dragged down when reading old chats
+    messagesContainer.addEventListener('scroll', () => {
+      const threshold = 80;
+      const position = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
+      isUserScrolledUp = position > threshold;
+    });
 
     function quickJoin(roomName) {
       roomIdInput.value = roomName;
@@ -622,12 +655,17 @@
       chatScreen.classList.remove('hidden');
 
       if (supabaseClient) {
-        loadMessages();
+        loadMessages(true);
         subscribeToRoom();
-
-        if (pollInterval) clearInterval(pollInterval);
-        pollInterval = setInterval(loadMessages, 3000);
       }
+    }
+
+    // Home / Back Button Logic
+    function goHome() {
+      if (roomChannel) supabaseClient.removeChannel(roomChannel);
+      chatScreen.classList.add('hidden');
+      authScreen.classList.remove('hidden');
+      currentRoom = '';
     }
 
     joinBtn.addEventListener('click', enterRoom);
@@ -652,6 +690,45 @@
       adminModal.classList.add('hidden');
     }
 
+    // Toggle Notification Switch Logic
+    function toggleAdminNotifications(enabled) {
+      notificationsEnabled = enabled;
+      if (enabled) {
+        if ("Notification" in window && Notification.permission !== "granted") {
+          Notification.requestPermission();
+        }
+        startGlobalAdminListener();
+        alert("Live Notifications Activated for Admin!");
+      } else {
+        if (globalAdminChannel) supabaseClient.removeChannel(globalAdminChannel);
+      }
+    }
+
+    // Global Listener for All Room Messages
+    function startGlobalAdminListener() {
+      if (!supabaseClient) return;
+
+      globalAdminChannel = supabaseClient
+        .channel('global_admin_notifications')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'room_messages' }, payload => {
+          if (!notificationsEnabled) return;
+          const msg = payload.new;
+
+          // Sound Alert
+          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+          audio.play().catch(() => {});
+
+          // Browser Push Notification
+          if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(`KNChat Alert [${msg.room_id}]`, {
+              body: `${msg.sender_alias}: ${msg.message_text}`,
+              icon: 'https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO'
+            });
+          }
+        })
+        .subscribe();
+    }
+
     async function fetchAllActiveRooms() {
       if (!supabaseClient) return;
 
@@ -659,10 +736,7 @@
         .from('room_messages')
         .select('room_id');
 
-      if (error) {
-        alert("Error fetching rooms: " + error.message);
-        return;
-      }
+      if (error) return;
 
       const uniqueRooms = [...new Set(data.map(item => item.room_id))];
       adminRoomList.innerHTML = '';
@@ -686,23 +760,15 @@
       });
     }
 
-    function adminJoinRoom(roomName) {
-      quickJoin(roomName);
-    }
+    function adminJoinRoom(roomName) { quickJoin(roomName); }
 
     async function adminDeleteRoom(roomName) {
       if (!confirm(`Are you sure you want to delete room '${roomName}'?`)) return;
 
-      const { error } = await supabaseClient
-        .from('room_messages')
-        .delete()
-        .eq('room_id', roomName);
-
+      const { error } = await supabaseClient.from('room_messages').delete().eq('room_id', roomName);
       if (!error) {
         alert(`Room '${roomName}' deleted successfully.`);
         fetchAllActiveRooms();
-      } else {
-        alert("Delete failed: " + error.message);
       }
     }
 
@@ -715,18 +781,12 @@
       await supabaseClient.from('room_messages').insert([
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
-
-      loadMessages();
     }
 
     async function unsendMessage(msgId) {
       if (!confirm("Unsend this message?")) return;
       
-      const { error } = await supabaseClient
-        .from('room_messages')
-        .delete()
-        .eq('id', msgId);
-
+      const { error } = await supabaseClient.from('room_messages').delete().eq('id', msgId);
       if (!error) {
         const el = document.getElementById(`msg-${msgId}`);
         if (el) el.remove();
@@ -736,17 +796,8 @@
     async function promptClearChat() {
       const pwd = prompt("Enter Master Password to delete all messages in this room:");
       if (pwd === "ss43") {
-        const { error } = await supabaseClient
-          .from('room_messages')
-          .delete()
-          .eq('room_id', currentRoom);
-
-        if (!error) {
-          alert("All messages in this room have been cleared!");
-          loadMessages();
-        } else {
-          alert("Failed to clear messages: " + error.message);
-        }
+        await supabaseClient.from('room_messages').delete().eq('room_id', currentRoom);
+        loadMessages(true);
       } else if (pwd !== null) {
         alert("Incorrect Password!");
       }
@@ -755,7 +806,7 @@
     sendBtn.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
-    async function loadMessages() {
+    async function loadMessages(autoScroll = false) {
       const SeventyTwoHoursAgo = new Date(Date.now() - (72 * 60 * 60 * 1000)).toISOString();
 
       const { data, error } = await supabaseClient
@@ -765,7 +816,7 @@
         .gte('created_at', SeventyTwoHoursAgo)
         .order('created_at', { ascending: true });
 
-      if (error) return console.error(error);
+      if (error) return;
 
       messagesContainer.innerHTML = `
         <div class="system-welcome-card">
@@ -774,17 +825,15 @@
         </div>
       `;
 
-      data.forEach(msg => appendMessage(msg));
+      data.forEach(msg => appendMessage(msg, false));
+      if (autoScroll) scrollToBottom();
     }
 
     function subscribeToRoom() {
       if (roomChannel) supabaseClient.removeChannel(roomChannel);
 
       roomChannel = supabaseClient.channel(`room_${currentRoom}_${Date.now()}`, {
-        config: { 
-          presence: { key: myAlias },
-          broadcast: { self: true }
-        }
+        config: { presence: { key: myAlias } }
       });
 
       roomChannel
@@ -795,27 +844,24 @@
           filter: `room_id=eq.${currentRoom}`
         }, payload => {
           if (payload.eventType === 'INSERT') {
-            appendMessage(payload.new);
-            scrollToBottom();
+            appendMessage(payload.new, true);
           } else if (payload.eventType === 'DELETE') {
-            loadMessages();
+            const el = document.getElementById(`msg-${payload.old.id}`);
+            if (el) el.remove();
           }
         })
         .on('presence', { sync: () => {
           const state = roomChannel.presenceState();
-          const count = Object.keys(state).length;
-          onlineCountSpan.innerText = `${count} Online`;
+          onlineCountSpan.innerText = `${Object.keys(state).length} Online`;
         }})
         .subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
             await roomChannel.track({ online_at: new Date().toISOString() });
-          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-            setTimeout(subscribeToRoom, 1000);
           }
         });
     }
 
-    function appendMessage(msg) {
+    function appendMessage(msg, isLiveNew = false) {
       if (document.getElementById(`msg-${msg.id}`)) return;
 
       const div = document.createElement('div');
@@ -835,30 +881,20 @@
       `;
 
       messagesContainer.appendChild(div);
-      scrollToBottom();
+
+      // Scroll Down ONLY if user is at bottom or if it's their own message
+      if (isLiveNew && (!isUserScrolledUp || isMyMessage)) {
+        scrollToBottom();
+      }
     }
 
-    function scrollToBottom() { messagesContainer.scrollTop = messagesContainer.scrollHeight; }
+    function scrollToBottom() { 
+      messagesContainer.scrollTop = messagesContainer.scrollHeight; 
+    }
 
     function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, 
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
+      return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
     }
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible" && currentRoom) {
-        loadMessages();
-        subscribeToRoom();
-      }
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'PrintScreen' || (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u'))) {
-        e.preventDefault();
-        alert('Screenshots & saving are restricted for security!');
-      }
-    });
   </script>
 </body>
 </html>
