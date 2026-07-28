@@ -101,8 +101,8 @@
     }
 
     .logo-wrapper {
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
       margin: 0 auto 12px auto;
       display: flex;
       justify-content: center;
@@ -145,10 +145,10 @@
       font-weight: 700;
     }
 
-    .input-group { position: relative; margin-bottom: 16px; }
+    .input-group { position: relative; margin-bottom: 12px; }
     .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
-    input[type="text"] {
+    input[type="text"], select {
       width: 100%;
       background: rgba(10, 13, 20, 0.85);
       border: 1px solid var(--border-color);
@@ -159,11 +159,20 @@
       outline: none;
       -webkit-user-select: text;
       user-select: text;
+      appearance: none;
     }
 
-    input[type="text"]:focus { 
-      border-color: var(--accent-blue); 
-      box-shadow: 0 0 12px rgba(0, 136, 255, 0.2); 
+    .select-wrapper { position: relative; margin-bottom: 16px; }
+    .select-wrapper::after {
+      content: '\f0d7';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
     }
 
     .btn-primary {
@@ -184,32 +193,7 @@
       box-shadow: 0 8px 20px rgba(0, 136, 255, 0.25);
     }
 
-    .admin-rooms-title {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      margin-bottom: 12px;
-      text-align: left;
-      font-weight: 700;
-    }
-
-    .admin-rooms-grid { display: flex; flex-direction: column; gap: 10px; }
-
-    .room-card-btn {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-color);
-      padding: 12px 16px;
-      border-radius: 14px;
-      color: #c9d1d9;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-
-    /* Chat Header with Back Button */
+    /* Chat Header */
     .chat-header {
       padding: 12px 16px;
       background: rgba(10, 13, 20, 0.9);
@@ -233,10 +217,7 @@
       justify-content: center;
       cursor: pointer;
       font-size: 14px;
-      transition: all 0.2s;
     }
-
-    .back-btn:active { transform: scale(0.92); }
 
     .room-info { display: flex; flex-direction: column; gap: 2px; }
     .room-name-container { display: flex; align-items: center; gap: 8px; }
@@ -281,6 +262,7 @@
       flex-direction: column;
       gap: 12px;
       scroll-behavior: smooth;
+      position: relative;
     }
 
     .system-welcome-card {
@@ -313,6 +295,7 @@
       line-height: 1.4;
       word-break: break-word;
       position: relative;
+      cursor: pointer;
     }
 
     .message.outgoing {
@@ -333,14 +316,92 @@
 
     .sender-tag { font-size: 10px; font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.9; }
 
-    .unsend-btn {
-      font-size: 10px;
-      color: rgba(255, 255, 255, 0.6);
-      margin-top: 5px;
-      display: inline-block;
+    /* Pop-up Reactions Style */
+    .reaction-popup {
+      position: absolute;
+      top: -44px;
+      background: rgba(15, 20, 32, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      z-index: 100;
+      animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .message.outgoing .reaction-popup { right: 0; }
+    .message.incoming .reaction-popup { left: 0; }
+
+    @keyframes popIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .react-emoji {
+      font-size: 18px;
       cursor: pointer;
-      text-align: right;
-      width: 100%;
+      transition: transform 0.15s;
+    }
+
+    .react-emoji:hover, .react-emoji:active {
+      transform: scale(1.35);
+    }
+
+    .reactions-display {
+      display: flex;
+      gap: 4px;
+      font-size: 11px;
+      margin-top: 4px;
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 10px;
+      width: fit-content;
+    }
+
+    .msg-meta {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    .read-receipt { font-size: 12px; }
+    .read-receipt.seen { color: #00f0ff; }
+
+    /* Typing Dot Indicator Style */
+    .typing-indicator-box {
+      font-size: 11px;
+      color: var(--accent-blue);
+      font-weight: 600;
+      padding: 4px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(10, 13, 20, 0.8);
+    }
+
+    .typing-dots span {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--accent-blue);
+      animation: typingDots 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typingDots {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
     }
 
     .chat-input-area {
@@ -369,7 +430,7 @@
       box-shadow: 0 4px 15px rgba(139, 47, 201, 0.3);
     }
 
-    /* Modal & Notification Toggle */
+    /* Modal Styles */
     .modal-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -407,7 +468,6 @@
     .modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
     .close-modal-btn { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
 
-    /* Switch Slide Toggle */
     .notify-toggle-box {
       background: rgba(139, 47, 201, 0.1);
       border: 1px solid rgba(139, 47, 201, 0.3);
@@ -421,45 +481,26 @@
 
     .notify-info { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #e6edf3; }
 
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
-    }
-
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
     .switch input { opacity: 0; width: 0; height: 0; }
 
     .slider {
-      position: absolute;
-      cursor: pointer;
+      position: absolute; cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #2a3042;
-      transition: .3s;
-      border-radius: 24px;
+      background-color: #2a3042; transition: .3s; border-radius: 24px;
     }
 
     .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: .3s;
-      border-radius: 50%;
+      position: absolute; content: "";
+      height: 18px; width: 18px; left: 3px; bottom: 3px;
+      background-color: white; transition: .3s; border-radius: 50%;
     }
 
     input:checked + .slider { background: var(--gradient-primary); }
     input:checked + .slider:before { transform: translateX(20px); }
 
     .room-list-container {
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex: 1;
+      overflow-y: auto; display: flex; flex-direction: column; gap: 10px; flex: 1;
     }
 
     .admin-room-item {
@@ -467,35 +508,14 @@
       border: 1px solid var(--border-color);
       padding: 10px 14px;
       border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
     }
 
     .admin-room-name { font-size: 13px; font-weight: 600; color: #e6edf3; }
     .admin-item-actions { display: flex; gap: 6px; }
 
-    .btn-small-join {
-      background: var(--accent-blue);
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-small-delete {
-      background: rgba(248, 81, 73, 0.2);
-      color: #ff7b72;
-      border: 1px solid rgba(248, 81, 73, 0.3);
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
+    .btn-small-join { background: var(--accent-blue); color: white; border: none; padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .btn-small-delete { background: rgba(248, 81, 73, 0.2); color: #ff7b72; border: 1px solid rgba(248, 81, 73, 0.3); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; }
 
     #messages-container::-webkit-scrollbar { width: 3px; }
     #messages-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
@@ -503,7 +523,7 @@
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- ১. জয়েন স্ক্রিন -->
+  <!-- ১. জয়েন স্ক্রিন -->
   <div id="auth-screen" class="app-card">
     <div class="top-bar-home">
       <button class="admin-btn-home" onclick="openAdminPanel()"><i class="fa-solid fa-user-gear"></i> Admin</button>
@@ -520,29 +540,24 @@
     
     <div class="input-group">
       <i class="fa-solid fa-key"></i>
-      <input type="text" id="room-id-input" placeholder="Enter Secret Room ID" autocomplete="off">
+      <input type="text" id="room-id-input" placeholder="Enter Secret Room Key" autocomplete="off">
+    </div>
+
+    <!-- Universal Room Dropdown Selector -->
+    <div class="select-wrapper">
+      <i class="fa-solid fa-vault" style="position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted); z-index:2;"></i>
+      <select id="universal-room-select" onchange="selectUniversalRoom(this.value)">
+        <option value="" disabled selected>Select Universal Vault Key...</option>
+        <option value="Vault Alpha">Vault Alpha Key</option>
+        <option value="Vault Beta">Vault Beta Key</option>
+        <option value="Vault Omega">Vault Omega Key</option>
+      </select>
     </div>
 
     <button id="join-btn" class="btn-primary">
       <span>Enter Chat Vault</span>
       <i class="fa-solid fa-arrow-right"></i>
     </button>
-
-    <div class="admin-rooms-title">Built-in Chat Rooms</div>
-    <div class="admin-rooms-grid">
-      <div class="room-card-btn" onclick="quickJoin('Vault Alpha')">
-        <span><i class="fa-solid fa-lock" style="color: var(--accent-blue); margin-right: 8px;"></i> Vault Alpha</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 11px; color: var(--text-muted);"></i>
-      </div>
-      <div class="room-card-btn" onclick="quickJoin('Vault Beta')">
-        <span><i class="fa-solid fa-lock" style="color: var(--accent-blue); margin-right: 8px;"></i> Vault Beta</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 11px; color: var(--text-muted);"></i>
-      </div>
-      <div class="room-card-btn" onclick="quickJoin('Vault Omega')">
-        <span><i class="fa-solid fa-lock" style="color: var(--accent-blue); margin-right: 8px;"></i> Vault Omega</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 11px; color: var(--text-muted);"></i>
-      </div>
-    </div>
   </div>
 
   <!-- ২. অ্যাডমিন প্যানেল মডাল -->
@@ -553,7 +568,6 @@
         <button class="close-modal-btn" onclick="closeAdminPanel()"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Notification Slide Toggle -->
       <div class="notify-toggle-box">
         <div class="notify-info">
           <i class="fa-solid fa-bell" style="color:#c084fc;"></i>
@@ -570,10 +584,9 @@
   </div>
 
   <!-- ৩. চ্যাট স্ক্রিন -->
-  <div id="chat-screen" class="app-card hidden">
+  <div id="chat-screen" class="app-card hidden" onclick="closeAllPopups()">
     <div class="chat-header">
       <div class="header-left">
-        <!-- Home Back Button -->
         <button class="back-btn" onclick="goHome()" title="Back to Home">
           <i class="fa-solid fa-chevron-left"></i>
         </button>
@@ -595,6 +608,14 @@
 
     <div id="messages-container"></div>
 
+    <!-- Typing Dots Box -->
+    <div id="typing-indicator" class="typing-indicator-box hidden">
+      <span id="typing-user">Someone</span> is typing
+      <div class="typing-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
     <div class="chat-input-area">
       <input type="text" id="message-input" placeholder="Type message..." autocomplete="off">
       <button id="send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
@@ -615,6 +636,8 @@
     let currentRoom = '';
     let roomChannel = null;
     let isUserScrolledUp = false;
+    let typingTimeout = null;
+    let popupTimer = null;
 
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
@@ -628,24 +651,24 @@
     const sendBtn = document.getElementById('send-btn');
     const onlineCountSpan = document.getElementById('online-count');
     const adminRoomList = document.getElementById('admin-room-list');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const typingUser = document.getElementById('typing-user');
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
 
-    // Detect Scroll State so user isn't dragged down when reading old chats
+    function selectUniversalRoom(val) {
+      if (val) roomIdInput.value = val;
+    }
+
     messagesContainer.addEventListener('scroll', () => {
       const threshold = 80;
       const position = messagesContainer.scrollHeight - messagesContainer.scrollTop - messagesContainer.clientHeight;
       isUserScrolledUp = position > threshold;
     });
 
-    function quickJoin(roomName) {
-      roomIdInput.value = roomName;
-      enterRoom();
-    }
-
     function enterRoom() {
       const roomId = roomIdInput.value.trim();
-      if (!roomId) return alert("Please enter a Room ID!");
+      if (!roomId) return alert("Please enter a Room Key!");
 
       currentRoom = roomId;
       roomTitle.innerText = roomId;
@@ -660,7 +683,6 @@
       }
     }
 
-    // Home / Back Button Logic
     function goHome() {
       if (roomChannel) supabaseClient.removeChannel(roomChannel);
       chatScreen.classList.add('hidden');
@@ -686,11 +708,8 @@
       }
     }
 
-    function closeAdminPanel() {
-      adminModal.classList.add('hidden');
-    }
+    function closeAdminPanel() { adminModal.classList.add('hidden'); }
 
-    // Toggle Notification Switch Logic
     function toggleAdminNotifications(enabled) {
       notificationsEnabled = enabled;
       if (enabled) {
@@ -704,7 +723,6 @@
       }
     }
 
-    // Global Listener for All Room Messages
     function startGlobalAdminListener() {
       if (!supabaseClient) return;
 
@@ -714,11 +732,9 @@
           if (!notificationsEnabled) return;
           const msg = payload.new;
 
-          // Sound Alert
           const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
           audio.play().catch(() => {});
 
-          // Browser Push Notification
           if ("Notification" in window && Notification.permission === "granted") {
             new Notification(`KNChat Alert [${msg.room_id}]`, {
               body: `${msg.sender_alias}: ${msg.message_text}`,
@@ -760,7 +776,10 @@
       });
     }
 
-    function adminJoinRoom(roomName) { quickJoin(roomName); }
+    function adminJoinRoom(roomName) { 
+      roomIdInput.value = roomName;
+      enterRoom();
+    }
 
     async function adminDeleteRoom(roomName) {
       if (!confirm(`Are you sure you want to delete room '${roomName}'?`)) return;
@@ -771,6 +790,16 @@
         fetchAllActiveRooms();
       }
     }
+
+    messageInput.addEventListener('input', () => {
+      if (roomChannel) {
+        roomChannel.send({
+          type: 'broadcast',
+          event: 'typing',
+          payload: { user: myAlias }
+        });
+      }
+    });
 
     async function sendMessage() {
       const text = messageInput.value.trim();
@@ -791,6 +820,41 @@
         const el = document.getElementById(`msg-${msgId}`);
         if (el) el.remove();
       }
+    }
+
+    async function sendReaction(msgId, emoji) {
+      if (roomChannel) {
+        roomChannel.send({
+          type: 'broadcast',
+          event: 'reaction',
+          payload: { msgId, emoji, user: myAlias }
+        });
+      }
+      applyReaction(msgId, emoji, myAlias);
+      closeAllPopups();
+    }
+
+    function applyReaction(msgId, emoji, user) {
+      const container = document.getElementById(`reactions-${msgId}`);
+      if (!container) return;
+      
+      let badge = container.querySelector(`[data-emoji="${emoji}"]`);
+      if (badge) {
+        let count = parseInt(badge.getAttribute('data-count')) + 1;
+        badge.setAttribute('data-count', count);
+        badge.innerText = `${emoji} ${count}`;
+      } else {
+        badge = document.createElement('span');
+        badge.setAttribute('data-emoji', emoji);
+        badge.setAttribute('data-count', '1');
+        badge.innerText = `${emoji} 1`;
+        container.appendChild(badge);
+      }
+    }
+
+    function closeAllPopups() {
+      if (popupTimer) clearTimeout(popupTimer);
+      document.querySelectorAll('.reaction-popup').forEach(el => el.remove());
     }
 
     async function promptClearChat() {
@@ -827,12 +891,28 @@
 
       data.forEach(msg => appendMessage(msg, false));
       if (autoScroll) scrollToBottom();
+      updateReadReceipts();
+    }
+
+    function updateReadReceipts() {
+      const state = roomChannel ? roomChannel.presenceState() : {};
+      const onlineUsers = Object.keys(state).length;
+
+      document.querySelectorAll('.read-receipt').forEach(el => {
+        if (onlineUsers > 1) {
+          el.innerHTML = '<i class="fa-solid fa-check-double"></i>';
+          el.classList.add('seen');
+        } else {
+          el.innerHTML = '<i class="fa-solid fa-check"></i>';
+          el.classList.remove('seen');
+        }
+      });
     }
 
     function subscribeToRoom() {
       if (roomChannel) supabaseClient.removeChannel(roomChannel);
 
-      roomChannel = supabaseClient.channel(`room_${currentRoom}_${Date.now()}`, {
+      roomChannel = supabaseClient.channel(`room_${currentRoom}`, {
         config: { presence: { key: myAlias } }
       });
 
@@ -850,9 +930,27 @@
             if (el) el.remove();
           }
         })
+        .on('broadcast', { event: 'typing' }, payload => {
+          if (payload.payload.user !== myAlias) {
+            typingUser.innerText = payload.payload.user;
+            typingIndicator.classList.remove('hidden');
+            
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+              typingIndicator.classList.add('hidden');
+            }, 2000);
+          }
+        })
+        .on('broadcast', { event: 'reaction' }, payload => {
+          if (payload.payload.user !== myAlias) {
+            applyReaction(payload.payload.msgId, payload.payload.emoji, payload.payload.user);
+          }
+        })
         .on('presence', { sync: () => {
           const state = roomChannel.presenceState();
-          onlineCountSpan.innerText = `${Object.keys(state).length} Online`;
+          const count = Object.keys(state).length;
+          onlineCountSpan.innerText = `${count} Online`;
+          updateReadReceipts();
         }})
         .subscribe(async (status) => {
           if (status === 'SUBSCRIBED') {
@@ -872,20 +970,78 @@
 
       const isAdminTag = msg.sender_alias.includes('Kazim Nahian');
 
+      const state = roomChannel ? roomChannel.presenceState() : {};
+      const isMultipleOnline = Object.keys(state).length > 1;
+
       div.innerHTML = `
         <span class="sender-tag" style="${isAdminTag ? 'color:#c084fc;' : ''}">
           ${isAdminTag ? '<i class="fa-solid fa-crown"></i> Kazim Nahian (Admin)' : (isMyMessage ? 'You' : msg.sender_alias)}
         </span>
-        ${escapeHTML(msg.message_text)}
-        ${(isMyMessage || isAdminUser) ? `<div class="unsend-btn" onclick="unsendMessage('${msg.id}')"><i class="fa-solid fa-trash"></i> Delete</div>` : ''}
+        <div>${escapeHTML(msg.message_text)}</div>
+
+        <div id="reactions-${msg.id}" class="reactions-display"></div>
+
+        <div class="msg-meta">
+          <span>${new Date(msg.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          ${isMyMessage ? `<span class="read-receipt ${isMultipleOnline ? 'seen' : ''}">${isMultipleOnline ? '<i class="fa-solid fa-check-double"></i>' : '<i class="fa-solid fa-check"></i>'}</span>` : ''}
+        </div>
       `;
+
+      // Long Press Handler for Reaction Popup
+      let pressTimer;
+
+      const startPress = (e) => {
+        pressTimer = setTimeout(() => {
+          openReactionPopup(div, msg.id, isMyMessage);
+        }, 350); // 350ms Hold
+      };
+
+      const cancelPress = () => clearTimeout(pressTimer);
+
+      div.addEventListener('touchstart', startPress);
+      div.addEventListener('touchend', cancelPress);
+      div.addEventListener('touchmove', cancelPress);
+      div.addEventListener('mousedown', startPress);
+      div.addEventListener('mouseup', cancelPress);
+      div.addEventListener('mouseleave', cancelPress);
 
       messagesContainer.appendChild(div);
 
-      // Scroll Down ONLY if user is at bottom or if it's their own message
       if (isLiveNew && (!isUserScrolledUp || isMyMessage)) {
         scrollToBottom();
       }
+    }
+
+    function openReactionPopup(msgElement, msgId, isMyMessage) {
+      closeAllPopups();
+
+      const popup = document.createElement('div');
+      popup.className = 'reaction-popup';
+      popup.onclick = (e) => e.stopPropagation();
+
+      const emojis = ['👍', '❤️', '😂', '🔥', '😮'];
+      emojis.forEach(emoji => {
+        const span = document.createElement('span');
+        span.className = 'react-emoji';
+        span.innerText = emoji;
+        span.onclick = () => sendReaction(msgId, emoji);
+        popup.appendChild(span);
+      });
+
+      if (isMyMessage || isAdminUser) {
+        const delBtn = document.createElement('span');
+        delBtn.style.cssText = 'font-size:12px; color:#ff7b72; cursor:pointer; margin-left:4px; display:flex; align-items:center;';
+        delBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+        delBtn.onclick = () => { unsendMessage(msgId); closeAllPopups(); };
+        popup.appendChild(delBtn);
+      }
+
+      msgElement.appendChild(popup);
+
+      // Auto hide popup after 5 seconds
+      popupTimer = setTimeout(() => {
+        popup.remove();
+      }, 5000);
     }
 
     function scrollToBottom() { 
