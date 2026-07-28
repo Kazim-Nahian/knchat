@@ -375,24 +375,32 @@
     .read-receipt { font-size: 12px; }
     .read-receipt.seen { color: #00f0ff; }
 
-    /* Typing Dot Indicator Style */
+    /* Fixed Typing Dot Indicator Style */
     .typing-indicator-box {
-      font-size: 11px;
-      color: var(--accent-blue);
+      font-size: 12px;
+      color: #0088ff;
       font-weight: 600;
-      padding: 4px 16px;
+      padding: 8px 16px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(10, 13, 20, 0.8);
+      gap: 8px;
+      background: rgba(10, 13, 20, 0.95);
+      border-top: 1px solid var(--border-color);
+      width: 100%;
+    }
+
+    .typing-dots {
+      display: flex;
+      align-items: center;
+      gap: 3px;
     }
 
     .typing-dots span {
       display: inline-block;
-      width: 4px;
-      height: 4px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
-      background-color: var(--accent-blue);
+      background-color: #0088ff;
       animation: typingDots 1.4s infinite ease-in-out both;
     }
 
@@ -400,8 +408,8 @@
     .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
 
     @keyframes typingDots {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
+      0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
+      40% { transform: scale(1.2); opacity: 1; }
     }
 
     .chat-input-area {
@@ -608,7 +616,7 @@
 
     <div id="messages-container"></div>
 
-    <!-- Typing Dots Box -->
+    <!-- Live Typing Indicator Box -->
     <div id="typing-indicator" class="typing-indicator-box hidden">
       <span id="typing-user">Someone</span> is typing
       <div class="typing-dots">
@@ -791,6 +799,7 @@
       }
     }
 
+    // Input Trigger Typing Event
     messageInput.addEventListener('input', () => {
       if (roomChannel) {
         roomChannel.send({
@@ -934,11 +943,12 @@
           if (payload.payload.user !== myAlias) {
             typingUser.innerText = payload.payload.user;
             typingIndicator.classList.remove('hidden');
+            scrollToBottom();
             
             clearTimeout(typingTimeout);
             typingTimeout = setTimeout(() => {
               typingIndicator.classList.add('hidden');
-            }, 2000);
+            }, 2500);
           }
         })
         .on('broadcast', { event: 'reaction' }, payload => {
@@ -987,13 +997,12 @@
         </div>
       `;
 
-      // Long Press Handler for Reaction Popup
       let pressTimer;
 
       const startPress = (e) => {
         pressTimer = setTimeout(() => {
           openReactionPopup(div, msg.id, isMyMessage);
-        }, 350); // 350ms Hold
+        }, 350);
       };
 
       const cancelPress = () => clearTimeout(pressTimer);
@@ -1038,7 +1047,6 @@
 
       msgElement.appendChild(popup);
 
-      // Auto hide popup after 5 seconds
       popupTimer = setTimeout(() => {
         popup.remove();
       }, 5000);
