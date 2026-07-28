@@ -3,28 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CyberVault — Anonymous Chat</title>
+  <title>KNChat — Private. Secure. Yours.</title>
   
-  <!-- PWA Theme Color -->
-  <meta name="theme-color" content="#0d1117">
+  <!-- Direct Image Proxy for Favicon / Search Bar Icon -->
+  <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
+  <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
 
-  <!-- Inline Manifest for PWABuilder -->
-  <link rel="manifest" href='data:application/json,{"short_name":"CyberVault","name":"CyberVault Anonymous Chat","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2092/2092663.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2092/2092663.png","sizes":"512x512","type":"image/png"}],"start_url":"/","background_color":"#0d1117","theme_color":"#238636","display":"standalone"}'>
+  <!-- PWA Theme Color -->
+  <meta name="theme-color" content="#07090e">
+
+  <!-- Inline Manifest -->
+  <link rel="manifest" href='data:application/json,{"short_name":"KNChat","name":"KNChat Private Messenger","icons":[{"src":"https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO","sizes":"192x192","type":"image/png"},{"src":"https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO","sizes":"512x512","type":"image/png"}],"start_url":"/","background_color":"#07090e","theme_color":"#0088ff","display":"standalone"}'>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    :root {
+      --bg-dark: #07090e;
+      --card-bg: rgba(15, 18, 28, 0.85);
+      --accent-blue: #0088ff;
+      --accent-purple: #8b2fc9;
+      --gradient-primary: linear-gradient(135deg, #0088ff 0%, #8b2fc9 100%);
+      --text-main: #f0f3f9;
+      --text-muted: #8a94a6;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
       user-select: none;
       -webkit-touch-callout: none;
     }
@@ -33,8 +45,8 @@
       width: 100%;
       height: 100%;
       height: 100dvh;
-      background: #0d1117;
-      color: #e6edf3;
+      background: var(--bg-dark);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -44,8 +56,10 @@
     .hidden { display: none !important; }
 
     .app-card {
-      background: #161b22;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
       width: 100%;
       max-width: 480px;
       height: 100%;
@@ -59,122 +73,208 @@
     @media (min-width: 481px) {
       .app-card {
         height: 92vh;
-        max-height: 750px;
-        border-radius: 24px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+        max-height: 780px;
+        border-radius: 28px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 0, 0, 0.5);
       }
     }
 
     #auth-screen {
-      padding: 30px 20px;
+      padding: 30px 24px;
       text-align: center;
       justify-content: center;
       overflow-y: auto;
+      position: relative;
     }
 
-    .brand-icon {
-      font-size: 48px;
-      color: #238636;
-      margin-bottom: 12px;
-      text-shadow: 0 0 20px rgba(35, 134, 54, 0.4);
+    .top-bar-home {
+      position: absolute;
+      top: 18px;
+      right: 18px;
     }
 
-    .auth-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-    .auth-subtitle { font-size: 13px; color: #8b949e; margin-bottom: 24px; }
+    .admin-btn-home {
+      background: rgba(139, 47, 201, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(139, 47, 201, 0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .admin-btn-home:hover {
+      background: rgba(139, 47, 201, 0.3);
+      box-shadow: 0 0 12px rgba(139, 47, 201, 0.4);
+    }
+
+    /* Clean & Sharp Logo Container */
+    .logo-wrapper {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 12px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .main-logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+
+    /* Title Balanced Styling */
+    .auth-title { 
+      font-size: 30px; 
+      font-weight: 800; 
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .title-kn {
+      color: #0088ff;
+    }
+
+    .title-chat {
+      color: #ffffff;
+      opacity: 0.95;
+    }
+    
+    .auth-subtitle { 
+      font-size: 10px; 
+      color: var(--text-muted); 
+      margin-bottom: 28px; 
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
 
     .input-group { position: relative; margin-bottom: 16px; }
-    .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #8b949e; }
+    .input-group i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 
     input[type="text"] {
       width: 100%;
-      background: #0d1117;
-      border: 1px solid #30363d;
+      background: rgba(10, 13, 20, 0.85);
+      border: 1px solid var(--border-color);
       color: #fff;
       padding: 14px 14px 14px 46px;
-      border-radius: 14px;
-      font-size: 15px;
+      border-radius: 16px;
+      font-size: 14px;
       outline: none;
       transition: all 0.3s;
       -webkit-user-select: text;
       user-select: text;
     }
 
-    input[type="text"]:focus { border-color: #238636; box-shadow: 0 0 10px rgba(35, 134, 54, 0.3); }
+    input[type="text"]:focus { 
+      border-color: var(--accent-blue); 
+      box-shadow: 0 0 12px rgba(0, 136, 255, 0.2); 
+    }
 
     .btn-primary {
       width: 100%;
-      background: linear-gradient(135deg, #238636, #2ea043);
+      background: var(--gradient-primary);
       color: white;
       border: none;
-      padding: 14px;
-      border-radius: 14px;
+      padding: 15px;
+      border-radius: 16px;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
       margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(0, 136, 255, 0.25);
+      transition: all 0.3s;
     }
+
+    .btn-primary:active { transform: scale(0.98); }
 
     .admin-rooms-title {
-      font-size: 12px;
-      color: #8b949e;
+      font-size: 11px;
+      color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       margin-bottom: 12px;
       text-align: left;
+      font-weight: 700;
     }
 
-    .admin-rooms-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .admin-rooms-grid { display: flex; flex-direction: column; gap: 10px; }
 
     .room-card-btn {
       background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
       padding: 12px 16px;
-      border-radius: 12px;
+      border-radius: 14px;
       color: #c9d1d9;
       font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .room-card-btn:active { background: rgba(35, 134, 54, 0.2); }
+    .room-card-btn:hover {
+      background: rgba(0, 136, 255, 0.08);
+      border-color: rgba(0, 136, 255, 0.3);
+    }
 
     .chat-header {
-      padding: 12px 16px;
-      background: #0d1117;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 18px;
+      background: rgba(10, 13, 20, 0.9);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
     }
 
     .room-info { display: flex; flex-direction: column; gap: 2px; }
     .room-name-container { display: flex; align-items: center; gap: 8px; }
-    .status-dot { width: 8px; height: 8px; background-color: #2ea043; border-radius: 50%; box-shadow: 0 0 8px #2ea043; }
-    .room-name { font-weight: 700; font-size: 15px; }
-    .online-count { font-size: 11px; color: #8b949e; }
+    .status-dot { width: 8px; height: 8px; background-color: #0088ff; border-radius: 50%; box-shadow: 0 0 8px #0088ff; }
+    .room-name { font-weight: 700; font-size: 16px; }
+    .online-count { font-size: 11px; color: var(--text-muted); }
 
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+    }
+
+    .header-corner-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
     }
 
     .clear-btn {
-      background: rgba(248, 81, 73, 0.15);
+      background: rgba(248, 81, 73, 0.12);
       color: #ff7b72;
-      border: 1px solid rgba(248, 81, 73, 0.3);
+      border: 1px solid rgba(248, 81, 73, 0.25);
       padding: 6px 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 11px;
       font-weight: 600;
       cursor: pointer;
@@ -183,16 +283,20 @@
       gap: 4px;
     }
 
-    .clear-btn:active { background: rgba(248, 81, 73, 0.3); }
-
     .alias-badge {
-      background: rgba(56, 139, 253, 0.15);
-      color: #58a6ff;
-      border: 1px solid rgba(56, 139, 253, 0.3);
-      padding: 5px 10px;
+      background: rgba(0, 136, 255, 0.12);
+      color: var(--accent-blue);
+      border: 1px solid rgba(0, 136, 255, 0.3);
+      padding: 5px 12px;
       border-radius: 20px;
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
+    }
+
+    .admin-badge {
+      background: rgba(139, 47, 201, 0.2) !important;
+      color: #c084fc !important;
+      border-color: rgba(139, 47, 201, 0.4) !important;
     }
 
     #messages-container {
@@ -205,18 +309,18 @@
     }
 
     .system-welcome-card {
-      background: rgba(35, 134, 54, 0.1);
-      border: 1px dashed rgba(46, 160, 67, 0.4);
-      padding: 12px 14px;
-      border-radius: 12px;
+      background: rgba(139, 47, 201, 0.08);
+      border: 1px dashed rgba(139, 47, 201, 0.3);
+      padding: 14px;
+      border-radius: 16px;
       text-align: center;
       margin-bottom: 8px;
     }
 
     .welcome-title {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
-      color: #3fb950;
+      color: #c084fc;
       margin-bottom: 4px;
       display: flex;
       align-items: center;
@@ -224,16 +328,12 @@
       gap: 6px;
     }
 
-    .welcome-text {
-      font-size: 11.5px;
-      color: #8b949e;
-      line-height: 1.4;
-    }
+    .welcome-text { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
 
     .message {
       max-width: 82%;
       padding: 10px 14px;
-      border-radius: 16px;
+      border-radius: 18px;
       font-size: 14px;
       line-height: 1.4;
       word-break: break-word;
@@ -242,20 +342,21 @@
 
     .message.outgoing {
       align-self: flex-end;
-      background: linear-gradient(135deg, #1f6fed, #1158c7);
+      background: var(--gradient-primary);
       color: #fff;
       border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0, 136, 255, 0.2);
     }
 
     .message.incoming {
       align-self: flex-start;
-      background: #21262d;
-      border: 1px solid #30363d;
-      color: #c9d1d9;
+      background: rgba(22, 28, 42, 0.9);
+      border: 1px solid var(--border-color);
+      color: #e6edf3;
       border-bottom-left-radius: 4px;
     }
 
-    .sender-tag { font-size: 10px; font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.85; }
+    .sender-tag { font-size: 10px; font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.9; }
 
     .unsend-btn {
       font-size: 10px;
@@ -269,40 +370,137 @@
 
     .chat-input-area {
       padding: 12px 14px;
-      background: #0d1117;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(10, 13, 20, 0.95);
+      border-top: 1px solid var(--border-color);
       display: flex;
       gap: 10px;
       align-items: center;
     }
 
-    .chat-input-area input { flex: 1; margin-bottom: 0; padding-left: 14px; }
+    .chat-input-area input { flex: 1; margin-bottom: 0; }
 
     .send-btn {
       width: 46px;
       height: 46px;
-      background: #238636;
+      background: var(--gradient-primary);
       border: none;
       color: white;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
       font-size: 16px;
+      box-shadow: 0 4px 15px rgba(139, 47, 201, 0.3);
+      transition: all 0.2s;
+    }
+
+    .send-btn:active { transform: scale(0.95); }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: #0f131f;
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      width: 100%;
+      max-width: 400px;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 700; color: #c084fc; }
+    .close-modal-btn { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+
+    .room-list-container {
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .admin-room-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .admin-room-name { font-size: 13px; font-weight: 600; color: #e6edf3; }
+
+    .admin-item-actions { display: flex; gap: 6px; }
+
+    .btn-small-join {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-small-delete {
+      background: rgba(248, 81, 73, 0.2);
+      color: #ff7b72;
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
     #messages-container::-webkit-scrollbar { width: 3px; }
-    #messages-container::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    #messages-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 4px; }
   </style>
 </head>
 <body oncontextmenu="return false;">
 
-  <!-- ১. জয়েন স্ক্রিন -->
+  <!-- ১. জয়েন স্ক্রিন -->
   <div id="auth-screen" class="app-card">
-    <div class="brand-icon"><i class="fa-solid fa-user-shield"></i></div>
-    <div class="auth-title">CyberVault Chat</div>
-    <div class="auth-subtitle">Created by Kazim Nahian</div>
+    <div class="top-bar-home">
+      <button class="admin-btn-home" onclick="openAdminPanel()"><i class="fa-solid fa-user-gear"></i> Admin</button>
+    </div>
+
+    <!-- Clean Logo Section -->
+    <div class="logo-wrapper">
+      <img src="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO" alt="KNChat Logo" class="main-logo-img">
+    </div>
+    
+    <!-- Title & Developer Credit -->
+    <div class="auth-title">
+      <span class="title-kn">KN</span><span class="title-chat">Chat</span>
+    </div>
+    <div class="auth-subtitle">DEVELOPED BY KAZIM NAHIAN</div>
     
     <div class="input-group">
       <i class="fa-solid fa-key"></i>
@@ -310,28 +508,41 @@
     </div>
 
     <button id="join-btn" class="btn-primary">
-      <span>Enter Custom Room</span>
+      <span>Enter Chat Vault</span>
       <i class="fa-solid fa-arrow-right"></i>
     </button>
 
-    <div class="admin-rooms-title">Built-in Vault Rooms</div>
+    <div class="admin-rooms-title">Built-in Chat Rooms</div>
     <div class="admin-rooms-grid">
       <div class="room-card-btn" onclick="quickJoin('Vault Alpha')">
-        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 8px;"></i> Vault Alpha</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
+        <span><i class="fa-solid fa-lock" style="color: var(--accent-blue); margin-right: 8px;"></i> Vault Alpha</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px; color: var(--text-muted);"></i>
       </div>
       <div class="room-card-btn" onclick="quickJoin('Vault Beta')">
-        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 8px;"></i> Vault Beta</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
+        <span><i class="fa-solid fa-lock" style="color: var(--accent-blue); margin-right: 8px;"></i> Vault Beta</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px; color: var(--text-muted);"></i>
       </div>
       <div class="room-card-btn" onclick="quickJoin('Vault Omega')">
-        <span><i class="fa-solid fa-lock" style="color: #2ea043; margin-right: 8px;"></i> Vault Omega</span>
-        <i class="fa-solid fa-chevron-right" style="font-size: 11px;"></i>
+        <span><i class="fa-solid fa-lock" style="color: var(--accent-blue); margin-right: 8px;"></i> Vault Omega</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 11px; color: var(--text-muted);"></i>
       </div>
     </div>
   </div>
 
-  <!-- ২. চ্যাট স্ক্রিন -->
+  <!-- ২. অ্যাডমিন মডাল -->
+  <div id="admin-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-list-check"></i> Active Vault Rooms</div>
+        <button class="close-modal-btn" onclick="closeAdminPanel()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="admin-room-list" class="room-list-container">
+        <!-- Javascript populated -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ৩. চ্যাট স্ক্রিন -->
   <div id="chat-screen" class="app-card hidden">
     <div class="chat-header">
       <div class="room-info">
@@ -343,8 +554,9 @@
       </div>
 
       <div class="header-actions">
-        <button class="clear-btn" onclick="promptClearChat()"><i class="fa-solid fa-trash-can"></i> Clear All</button>
+        <button class="clear-btn" onclick="promptClearChat()"><i class="fa-solid fa-trash-can"></i> Clear</button>
         <span id="my-alias" class="alias-badge"></span>
+        <img src="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO" alt="KNChat" class="header-corner-logo">
       </div>
     </div>
 
@@ -357,7 +569,6 @@
   </div>
 
   <script>
-    // Inline Service Worker Registration for PWABuilder
     if ('serviceWorker' in navigator) {
       const swCode = `
         self.addEventListener('install', e => self.skipWaiting());
@@ -372,7 +583,8 @@
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
     const prefixes = ["Ghost", "Cipher", "Phantom", "Shadow", "Vortex", "Agent", "Nexus"];
-    const myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
+    let myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
+    let isAdminUser = false;
 
     let currentRoom = '';
     let roomChannel = null;
@@ -380,6 +592,7 @@
 
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
+    const adminModal = document.getElementById('admin-modal');
     const roomIdInput = document.getElementById('room-id-input');
     const joinBtn = document.getElementById('join-btn');
     const roomTitle = document.getElementById('room-title');
@@ -388,6 +601,7 @@
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
     const onlineCountSpan = document.getElementById('online-count');
+    const adminRoomList = document.getElementById('admin-room-list');
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
 
@@ -404,6 +618,7 @@
       roomTitle.innerText = roomId;
 
       authScreen.classList.add('hidden');
+      adminModal.classList.add('hidden');
       chatScreen.classList.remove('hidden');
 
       if (supabaseClient) {
@@ -417,6 +632,79 @@
 
     joinBtn.addEventListener('click', enterRoom);
     roomIdInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') enterRoom(); });
+
+    async function openAdminPanel() {
+      const pwd = prompt("Enter Admin Password:");
+      if (pwd === "ss43") {
+        isAdminUser = true;
+        myAlias = "Kazim Nahian (Admin)";
+        myAliasSpan.innerText = myAlias;
+        myAliasSpan.classList.add('admin-badge');
+
+        await fetchAllActiveRooms();
+        adminModal.classList.remove('hidden');
+      } else if (pwd !== null) {
+        alert("Incorrect Password!");
+      }
+    }
+
+    function closeAdminPanel() {
+      adminModal.classList.add('hidden');
+    }
+
+    async function fetchAllActiveRooms() {
+      if (!supabaseClient) return;
+
+      const { data, error } = await supabaseClient
+        .from('room_messages')
+        .select('room_id');
+
+      if (error) {
+        alert("Error fetching rooms: " + error.message);
+        return;
+      }
+
+      const uniqueRooms = [...new Set(data.map(item => item.room_id))];
+      adminRoomList.innerHTML = '';
+
+      if (uniqueRooms.length === 0) {
+        adminRoomList.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding:20px;">No Active Chat Rooms Found</div>`;
+        return;
+      }
+
+      uniqueRooms.forEach(room => {
+        const item = document.createElement('div');
+        item.className = 'admin-room-item';
+        item.innerHTML = `
+          <span class="admin-room-name"><i class="fa-solid fa-hashtag" style="color:var(--accent-blue);"></i> ${escapeHTML(room)}</span>
+          <div class="admin-item-actions">
+            <button class="btn-small-join" onclick="adminJoinRoom('${escapeHTML(room)}')">Join</button>
+            <button class="btn-small-delete" onclick="adminDeleteRoom('${escapeHTML(room)}')">Delete</button>
+          </div>
+        `;
+        adminRoomList.appendChild(item);
+      });
+    }
+
+    function adminJoinRoom(roomName) {
+      quickJoin(roomName);
+    }
+
+    async function adminDeleteRoom(roomName) {
+      if (!confirm(`Are you sure you want to delete room '${roomName}'?`)) return;
+
+      const { error } = await supabaseClient
+        .from('room_messages')
+        .delete()
+        .eq('room_id', roomName);
+
+      if (!error) {
+        alert(`Room '${roomName}' deleted successfully.`);
+        fetchAllActiveRooms();
+      } else {
+        alert("Delete failed: " + error.message);
+      }
+    }
 
     async function sendMessage() {
       const text = messageInput.value.trim();
@@ -445,7 +733,6 @@
       }
     }
 
-    // পাসওয়ার্ড দিয়ে সব চ্যাট ক্লিয়ার করার ফাংশন
     async function promptClearChat() {
       const pwd = prompt("Enter Master Password to delete all messages in this room:");
       if (pwd === "ss43") {
@@ -469,19 +756,21 @@
     messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
     async function loadMessages() {
+      const SeventyTwoHoursAgo = new Date(Date.now() - (72 * 60 * 60 * 1000)).toISOString();
+
       const { data, error } = await supabaseClient
         .from('room_messages')
         .select('*')
         .eq('room_id', currentRoom)
+        .gte('created_at', SeventyTwoHoursAgo)
         .order('created_at', { ascending: true });
 
       if (error) return console.error(error);
 
-      // আগের মেসেজ ক্লিয়ার করা ও ওয়েলকাম নোট যোগ করা
       messagesContainer.innerHTML = `
         <div class="system-welcome-card">
-          <div class="welcome-title"><i class="fa-solid fa-shield-halved"></i> Kazim Nahian's CyberVault</div>
-          <div class="welcome-text">Welcome to the anonymous encrypted room! Messages here are secured and restricted.</div>
+          <div class="welcome-title"><i class="fa-solid fa-shield-halved"></i> KNChat Encrypted Vault</div>
+          <div class="welcome-text">Created by <b>Kazim Nahian</b>. Private & Anonymous end-to-end environment.</div>
         </div>
       `;
 
@@ -535,10 +824,14 @@
       div.id = `msg-${msg.id}`;
       div.classList.add('message', isMyMessage ? 'outgoing' : 'incoming');
 
+      const isAdminTag = msg.sender_alias.includes('Kazim Nahian');
+
       div.innerHTML = `
-        <span class="sender-tag">${isMyMessage ? 'You' : msg.sender_alias}</span>
+        <span class="sender-tag" style="${isAdminTag ? 'color:#c084fc;' : ''}">
+          ${isAdminTag ? '<i class="fa-solid fa-crown"></i> Kazim Nahian (Admin)' : (isMyMessage ? 'You' : msg.sender_alias)}
+        </span>
         ${escapeHTML(msg.message_text)}
-        ${isMyMessage ? `<div class="unsend-btn" onclick="unsendMessage('${msg.id}')"><i class="fa-solid fa-trash"></i> Unsend</div>` : ''}
+        ${(isMyMessage || isAdminUser) ? `<div class="unsend-btn" onclick="unsendMessage('${msg.id}')"><i class="fa-solid fa-trash"></i> Delete</div>` : ''}
       `;
 
       messagesContainer.appendChild(div);
@@ -560,7 +853,6 @@
       }
     });
 
-    // স্ক্রিনশট এবং শর্টকাট ব্লক মেকানিজম
     document.addEventListener('keydown', function (e) {
       if (e.key === 'PrintScreen' || (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u'))) {
         e.preventDefault();
