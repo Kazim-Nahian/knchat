@@ -316,6 +316,56 @@
 
     .sender-tag { font-size: 10px; font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.9; }
 
+    /* Image Preview Message */
+    .chat-img-msg {
+      max-width: 100%;
+      border-radius: 12px;
+      margin-top: 4px;
+      display: block;
+      cursor: pointer;
+    }
+
+    /* Voice Message Card Style */
+    .audio-player-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(0,0,0,0.25);
+      padding: 8px 12px;
+      border-radius: 14px;
+      margin-top: 4px;
+      min-width: 180px;
+    }
+
+    .audio-play-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: var(--accent-blue);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .audio-wave-visual {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+      height: 20px;
+    }
+
+    .audio-wave-bar {
+      width: 3px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 3px;
+      animation: wavePulse 1s infinite ease-in-out alternate;
+    }
+
     /* Pop-up Reactions Style */
     .reaction-popup {
       position: absolute;
@@ -375,7 +425,7 @@
     .read-receipt { font-size: 12px; }
     .read-receipt.seen { color: #00f0ff; }
 
-    /* Fixed Typing Dot Indicator Style */
+    /* Typing Dot Indicator Style */
     .typing-indicator-box {
       font-size: 12px;
       color: #0088ff;
@@ -412,20 +462,111 @@
       40% { transform: scale(1.2); opacity: 1; }
     }
 
+    /* Recording Pop-up Wave Bar Style */
+    .recording-popup-bar {
+      padding: 10px 16px;
+      background: rgba(248, 81, 73, 0.15);
+      border-top: 1px solid rgba(248, 81, 73, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .rec-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ff7b72;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .wave-container {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 18px;
+    }
+
+    .wave-bar {
+      width: 3px;
+      height: 100%;
+      background-color: #ff7b72;
+      border-radius: 3px;
+      animation: wavePulse 0.8s infinite ease-in-out alternate;
+    }
+
+    .wave-bar:nth-child(1) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(2) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.4s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.15s; }
+
+    @keyframes wavePulse {
+      0% { height: 4px; }
+      100% { height: 18px; }
+    }
+
+    .rec-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-rec-cancel {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .btn-rec-send {
+      background: #ff7b72;
+      color: #fff;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
     .chat-input-area {
       padding: 12px 14px;
       background: rgba(10, 13, 20, 0.95);
       border-top: 1px solid var(--border-color);
       display: flex;
-      gap: 10px;
+      gap: 8px;
       align-items: center;
     }
 
     .chat-input-area input { flex: 1; margin-bottom: 0; }
 
+    .action-icon-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+
+    .action-icon-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
     .send-btn {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       background: var(--gradient-primary);
       border: none;
       color: white;
@@ -624,7 +765,37 @@
       </div>
     </div>
 
+    <!-- Live Recording Pop-up Wave Bar -->
+    <div id="recording-popup" class="recording-popup-bar hidden">
+      <div class="rec-info">
+        <i class="fa-solid fa-microphone"></i>
+        <span id="rec-timer">00:00</span>
+        <div class="wave-container">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+      <div class="rec-actions">
+        <button class="btn-rec-cancel" onclick="cancelRecording()"><i class="fa-solid fa-xmark"></i></button>
+        <button class="btn-rec-send" onclick="stopAndSendRecording()"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+
     <div class="chat-input-area">
+      <!-- Hidden File Input for Images -->
+      <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageSelected(event)">
+      
+      <button class="action-icon-btn" onclick="triggerImageUpload()" title="Send Image">
+        <i class="fa-solid fa-image"></i>
+      </button>
+
+      <button id="mic-btn" class="action-icon-btn" onclick="startRecording()" title="Record Voice">
+        <i class="fa-solid fa-microphone"></i>
+      </button>
+
       <input type="text" id="message-input" placeholder="Type message..." autocomplete="off">
       <button id="send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
@@ -647,6 +818,12 @@
     let typingTimeout = null;
     let popupTimer = null;
 
+    // Recording variables
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let recTimerInterval = null;
+    let secondsRecorded = 0;
+
     const authScreen = document.getElementById('auth-screen');
     const chatScreen = document.getElementById('chat-screen');
     const adminModal = document.getElementById('admin-modal');
@@ -661,6 +838,8 @@
     const adminRoomList = document.getElementById('admin-room-list');
     const typingIndicator = document.getElementById('typing-indicator');
     const typingUser = document.getElementById('typing-user');
+    const recordingPopup = document.getElementById('recording-popup');
+    const recTimer = document.getElementById('rec-timer');
 
     if (myAliasSpan) myAliasSpan.innerText = myAlias;
 
@@ -810,15 +989,93 @@
       }
     });
 
-    async function sendMessage() {
-      const text = messageInput.value.trim();
+    async function sendMessage(textPayload = null) {
+      const text = textPayload || messageInput.value.trim();
       if (!text || !supabaseClient) return;
 
-      messageInput.value = '';
+      if (!textPayload) messageInput.value = '';
 
       await supabaseClient.from('room_messages').insert([
         { room_id: currentRoom, sender_alias: myAlias, message_text: text }
       ]);
+    }
+
+    /* IMAGE UPLOAD HANDLER */
+    function triggerImageUpload() {
+      document.getElementById('image-upload-input').click();
+    }
+
+    function handleImageSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2 * 1024 * 1024) {
+        return alert("File size too large! Please upload images under 2MB.");
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Image = e.target.result;
+        sendMessage(`[IMG]${base64Image}[/IMG]`);
+      };
+      reader.readAsDataURL(file);
+      event.target.value = '';
+    }
+
+    /* VOICE RECORDING HANDLERS */
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.start();
+
+        recordingPopup.classList.remove('hidden');
+        secondsRecorded = 0;
+        recTimer.innerText = "00:00";
+
+        recTimerInterval = setInterval(() => {
+          secondsRecorded++;
+          const mins = String(Math.floor(secondsRecorded / 60)).padStart(2, '0');
+          const secs = String(secondsRecorded % 60).padStart(2, '0');
+          recTimer.innerText = `${mins}:${secs}`;
+        }, 1000);
+
+      } catch (err) {
+        alert("Microphone access denied or not supported!");
+      }
+    }
+
+    function cancelRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+      clearInterval(recTimerInterval);
+      recordingPopup.classList.add('hidden');
+    }
+
+    function stopAndSendRecording() {
+      if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+
+      mediaRecorder.onstop = () => {
+        clearInterval(recTimerInterval);
+        recordingPopup.classList.add('hidden');
+
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64Audio = e.target.result;
+          sendMessage(`[AUDIO]${base64Audio}[/AUDIO]`);
+        };
+        reader.readAsDataURL(audioBlob);
+      };
+
+      mediaRecorder.stop();
     }
 
     async function unsendMessage(msgId) {
@@ -876,7 +1133,7 @@
       }
     }
 
-    sendBtn.addEventListener('click', sendMessage);
+    sendBtn.addEventListener('click', () => sendMessage());
     messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
     async function loadMessages(autoScroll = false) {
@@ -969,6 +1226,26 @@
         });
     }
 
+    function toggleAudioPlay(btn, audioSrc) {
+      let audio = btn._audioInstance;
+      if (!audio) {
+        audio = new Audio(audioSrc);
+        btn._audioInstance = audio;
+
+        audio.onended = () => {
+          btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+        };
+      }
+
+      if (audio.paused) {
+        audio.play();
+        btn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+      } else {
+        audio.pause();
+        btn.innerHTML = '<i class="fa-solid fa-play"></i>';
+      }
+    }
+
     function appendMessage(msg, isLiveNew = false) {
       if (document.getElementById(`msg-${msg.id}`)) return;
 
@@ -979,15 +1256,40 @@
       div.classList.add('message', isMyMessage ? 'outgoing' : 'incoming');
 
       const isAdminTag = msg.sender_alias.includes('Kazim Nahian');
-
       const state = roomChannel ? roomChannel.presenceState() : {};
       const isMultipleOnline = Object.keys(state).length > 1;
+
+      let contentHTML = '';
+
+      if (msg.message_text.startsWith('[IMG]') && msg.message_text.endsWith('[/IMG]')) {
+        const imgSrc = msg.message_text.replace('[IMG]', '').replace('[/IMG]', '');
+        contentHTML = `<img src="${imgSrc}" class="chat-img-msg" onclick="window.open('${imgSrc}')" />`;
+      } else if (msg.message_text.startsWith('[AUDIO]') && msg.message_text.endsWith('[/AUDIO]')) {
+        const audioSrc = msg.message_text.replace('[AUDIO]', '').replace('[/AUDIO]', '');
+        contentHTML = `
+          <div class="audio-player-box">
+            <button class="audio-play-btn" onclick="toggleAudioPlay(this, '${audioSrc}')">
+              <i class="fa-solid fa-play"></i>
+            </button>
+            <div class="audio-wave-visual">
+              <div class="audio-wave-bar" style="height:12px;"></div>
+              <div class="audio-wave-bar" style="height:18px;"></div>
+              <div class="audio-wave-bar" style="height:8px;"></div>
+              <div class="audio-wave-bar" style="height:15px;"></div>
+              <div class="audio-wave-bar" style="height:10px;"></div>
+            </div>
+            <span style="font-size:11px; opacity:0.8;"><i class="fa-solid fa-microphone"></i> Voice</span>
+          </div>
+        `;
+      } else {
+        contentHTML = `<div>${escapeHTML(msg.message_text)}</div>`;
+      }
 
       div.innerHTML = `
         <span class="sender-tag" style="${isAdminTag ? 'color:#c084fc;' : ''}">
           ${isAdminTag ? '<i class="fa-solid fa-crown"></i> Kazim Nahian (Admin)' : (isMyMessage ? 'You' : msg.sender_alias)}
         </span>
-        <div>${escapeHTML(msg.message_text)}</div>
+        ${contentHTML}
 
         <div id="reactions-${msg.id}" class="reactions-display"></div>
 
