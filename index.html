@@ -802,9 +802,14 @@
   </div>
 
   <script>
+    // Supabase Configuration
     const SUPABASE_URL = 'https://fchhellbumpddpwbcivy.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_D_XeR8Leo24comyoGp1lSg_wosM-_7c';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+    // Cloudinary Configuration
+    const CLOUDINARY_CLOUD_NAME = 'jf8nxu3z'; 
+    const CLOUDINARY_UPLOAD_PRESET = 'knchat_preset';
 
     const prefixes = ["Ghost", "Cipher", "Phantom", "Shadow", "Vortex", "Agent", "Nexus"];
     let myAlias = `${prefixes[Math.floor(Math.random() * prefixes.length)]}-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -1000,26 +1005,44 @@
       ]);
     }
 
-    /* IMAGE UPLOAD HANDLER */
+    /* CLOUDINARY IMAGE UPLOAD HANDLER */
     function triggerImageUpload() {
       document.getElementById('image-upload-input').click();
     }
 
-    function handleImageSelected(event) {
+    async function handleImageSelected(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      if (file.size > 2 * 1024 * 1024) {
-        return alert("File size too large! Please upload images under 2MB.");
+      if (file.size > 10 * 1024 * 1024) {
+        return alert("ছবি বা ফাইলের সাইজ ১০ মেগাবাইটের বেশি হওয়া যাবে না!");
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64Image = e.target.result;
-        sendMessage(`[IMG]${base64Image}[/IMG]`);
-      };
-      reader.readAsDataURL(file);
-      event.target.value = '';
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+      try {
+        // Cloudinary-তে ছবি আপলোড হচ্ছে
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.secure_url) {
+          // Cloudinary URL চ্যাটে পাঠানো হবে
+          sendMessage(`[IMG]${data.secure_url}[/IMG]`);
+        } else {
+          alert("ছবি আপলোড হতে সমস্যা হয়েছে! আবার চেষ্টা করুন।");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("সার্ভারে ছবি আপলোড করা যায়নি! ইন্টারনেট কানেকশন চেক করুন।");
+      }
+
+      event.target.value = ''; // Input Reset
     }
 
     /* VOICE RECORDING HANDLERS */
