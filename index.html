@@ -2,11 +2,15 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>KNChat — Private. Secure. Yours.</title>
   
   <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
   <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
+  
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#07090e">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -32,6 +36,7 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       -webkit-user-select: none;
       user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body, html {
@@ -44,6 +49,7 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      position: fixed;
     }
 
     .hidden { display: none !important; }
@@ -316,6 +322,18 @@
 
     .sender-tag { font-size: 10px; font-weight: 700; margin-bottom: 4px; display: block; opacity: 0.9; }
 
+    /* Replied Box Inside Bubble */
+    .replied-context {
+      background: rgba(0, 0, 0, 0.25);
+      border-left: 3px solid #00f0ff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      margin-bottom: 6px;
+      opacity: 0.92;
+    }
+    .replied-context-user { font-weight: 700; font-size: 10px; color: #00f0ff; }
+
     /* Image Preview Message */
     .chat-img-msg {
       max-width: 100%;
@@ -532,6 +550,30 @@
       border-radius: 50%;
       cursor: pointer;
     }
+
+    /* Reply Preview Banner Styling */
+    .reply-preview-box {
+      background: rgba(15, 20, 32, 0.98);
+      border-top: 1px solid var(--accent-blue);
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .reply-preview-info {
+      display: flex;
+      flex-direction: column;
+      border-left: 2px solid var(--accent-blue);
+      padding-left: 10px;
+      max-width: 85%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .reply-preview-user { font-weight: 700; font-size: 11px; color: var(--accent-blue); }
+    .reply-preview-text { color: var(--text-muted); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; }
+    .close-reply-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
 
     .chat-input-area {
       padding: 12px 14px;
@@ -784,21 +826,30 @@
       </div>
     </div>
 
-    <div class="chat-input-area">
+    <!-- Live Reply Preview Bar -->
+    <div id="reply-preview" class="reply-preview-box hidden">
+      <div class="reply-preview-info">
+        <span id="reply-user" class="reply-preview-user"></span>
+        <span id="reply-text" class="reply-preview-text"></span>
+      </div>
+      <button class="close-reply-btn" onclick="cancelReply()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <form class="chat-input-area" onsubmit="handleSendForm(event)">
       <!-- Hidden File Input for Images -->
       <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageSelected(event)">
       
-      <button class="action-icon-btn" onclick="triggerImageUpload()" title="Send Image">
+      <button type="button" class="action-icon-btn" onclick="triggerImageUpload()" title="Send Image">
         <i class="fa-solid fa-image"></i>
       </button>
 
-      <button id="mic-btn" class="action-icon-btn" onclick="startRecording()" title="Record Voice">
+      <button type="button" id="mic-btn" class="action-icon-btn" onclick="startRecording()" title="Record Voice">
         <i class="fa-solid fa-microphone"></i>
       </button>
 
       <input type="text" id="message-input" placeholder="Type message..." autocomplete="off">
-      <button id="send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
-    </div>
+      <button type="submit" id="send-btn" class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
   </div>
 
   <script>
@@ -822,6 +873,7 @@
     let isUserScrolledUp = false;
     let typingTimeout = null;
     let popupTimer = null;
+    let activeReplyMsg = null;
 
     // Recording variables
     let mediaRecorder = null;
@@ -994,15 +1046,66 @@
       }
     });
 
+    /* Keyboard Stay Active On Form Submit */
+    function handleSendForm(e) {
+      e.preventDefault();
+      sendMessage();
+      messageInput.focus();
+    }
+
     async function sendMessage(textPayload = null) {
       const text = textPayload || messageInput.value.trim();
       if (!text || !supabaseClient) return;
 
+      let finalPayload = text;
+      if (activeReplyMsg) {
+        finalPayload = `[REPLY user="${activeReplyMsg.user}"]${activeReplyMsg.text}[/REPLY]${text}`;
+        cancelReply();
+      }
+
       if (!textPayload) messageInput.value = '';
 
       await supabaseClient.from('room_messages').insert([
-        { room_id: currentRoom, sender_alias: myAlias, message_text: text }
+        { room_id: currentRoom, sender_alias: myAlias, message_text: finalPayload }
       ]);
+    }
+
+    /* DOUBLE TAP TO REPLY SETUP */
+    function setupDoubleTapReply(element, sender, text) {
+      let lastTap = 0;
+      element.addEventListener('touchend', function (e) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) {
+          setReplyTarget(sender, text);
+          e.preventDefault();
+        }
+        lastTap = currentTime;
+      });
+
+      element.addEventListener('dblclick', function () {
+        setReplyTarget(sender, text);
+      });
+    }
+
+    function setReplyTarget(sender, text) {
+      let cleanText = text;
+      if (text.includes('[/REPLY]')) {
+        cleanText = text.split('[/REPLY]')[1];
+      }
+      if (cleanText.startsWith('[IMG]')) cleanText = '📷 Photo';
+      if (cleanText.startsWith('[AUDIO]')) cleanText = '🎙️ Voice Message';
+
+      activeReplyMsg = { user: sender, text: cleanText };
+      document.getElementById('reply-user').innerText = sender;
+      document.getElementById('reply-text').innerText = cleanText;
+      document.getElementById('reply-preview').classList.remove('hidden');
+      messageInput.focus();
+    }
+
+    function cancelReply() {
+      activeReplyMsg = null;
+      document.getElementById('reply-preview').classList.add('hidden');
     }
 
     /* CLOUDINARY IMAGE UPLOAD HANDLER */
@@ -1023,7 +1126,6 @@
       formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
 
       try {
-        // Cloudinary-তে ছবি আপলোড হচ্ছে
         const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
           method: 'POST',
           body: formData
@@ -1032,7 +1134,6 @@
         const data = await res.json();
 
         if (data.secure_url) {
-          // Cloudinary URL চ্যাটে পাঠানো হবে
           sendMessage(`[IMG]${data.secure_url}[/IMG]`);
         } else {
           alert("ছবি আপলোড হতে সমস্যা হয়েছে! আবার চেষ্টা করুন।");
@@ -1042,7 +1143,7 @@
         alert("সার্ভারে ছবি আপলোড করা যায়নি! ইন্টারনেট কানেকশন চেক করুন।");
       }
 
-      event.target.value = ''; // Input Reset
+      event.target.value = '';
     }
 
     /* VOICE RECORDING HANDLERS */
@@ -1155,9 +1256,6 @@
         alert("Incorrect Password!");
       }
     }
-
-    sendBtn.addEventListener('click', () => sendMessage());
-    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 
     async function loadMessages(autoScroll = false) {
       const SeventyTwoHoursAgo = new Date(Date.now() - (72 * 60 * 60 * 1000)).toISOString();
@@ -1282,13 +1380,33 @@
       const state = roomChannel ? roomChannel.presenceState() : {};
       const isMultipleOnline = Object.keys(state).length > 1;
 
+      let rawText = msg.message_text;
+      let replyHTML = '';
+
+      // Reply Extraction
+      if (rawText.startsWith('[REPLY') && rawText.includes('[/REPLY]')) {
+        const replyPart = rawText.substring(0, rawText.indexOf('[/REPLY]') + 8);
+        rawText = rawText.replace(replyPart, '');
+
+        const userMatch = replyPart.match(/user="([^"]+)"/);
+        const repUser = userMatch ? userMatch[1] : 'User';
+        const repText = replyPart.replace(/\[REPLY[^\]]*\]/, '').replace('[/REPLY]', '');
+
+        replyHTML = `
+          <div class="replied-context">
+            <div class="replied-context-user">${escapeHTML(repUser)}</div>
+            <div>${escapeHTML(repText)}</div>
+          </div>
+        `;
+      }
+
       let contentHTML = '';
 
-      if (msg.message_text.startsWith('[IMG]') && msg.message_text.endsWith('[/IMG]')) {
-        const imgSrc = msg.message_text.replace('[IMG]', '').replace('[/IMG]', '');
+      if (rawText.startsWith('[IMG]') && rawText.endsWith('[/IMG]')) {
+        const imgSrc = rawText.replace('[IMG]', '').replace('[/IMG]', '');
         contentHTML = `<img src="${imgSrc}" class="chat-img-msg" onclick="window.open('${imgSrc}')" />`;
-      } else if (msg.message_text.startsWith('[AUDIO]') && msg.message_text.endsWith('[/AUDIO]')) {
-        const audioSrc = msg.message_text.replace('[AUDIO]', '').replace('[/AUDIO]', '');
+      } else if (rawText.startsWith('[AUDIO]') && rawText.endsWith('[/AUDIO]')) {
+        const audioSrc = rawText.replace('[AUDIO]', '').replace('[/AUDIO]', '');
         contentHTML = `
           <div class="audio-player-box">
             <button class="audio-play-btn" onclick="toggleAudioPlay(this, '${audioSrc}')">
@@ -1305,13 +1423,14 @@
           </div>
         `;
       } else {
-        contentHTML = `<div>${escapeHTML(msg.message_text)}</div>`;
+        contentHTML = `<div>${escapeHTML(rawText)}</div>`;
       }
 
       div.innerHTML = `
         <span class="sender-tag" style="${isAdminTag ? 'color:#c084fc;' : ''}">
           ${isAdminTag ? '<i class="fa-solid fa-crown"></i> Kazim Nahian (Admin)' : (isMyMessage ? 'You' : msg.sender_alias)}
         </span>
+        ${replyHTML}
         ${contentHTML}
 
         <div id="reactions-${msg.id}" class="reactions-display"></div>
@@ -1338,6 +1457,9 @@
       div.addEventListener('mousedown', startPress);
       div.addEventListener('mouseup', cancelPress);
       div.addEventListener('mouseleave', cancelPress);
+
+      // Attach Double Tap Listener for Reply
+      setupDoubleTapReply(div, isMyMessage ? 'You' : msg.sender_alias, msg.message_text);
 
       messagesContainer.appendChild(div);
 
