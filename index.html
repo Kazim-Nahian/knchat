@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>KNChat — Private. Secure. Yours.</title>
   
+  <!-- App Icons -->
   <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
   <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1dI55bE4KZBPEvZKj5RdTAwpJh4yne-KO">
   
+  <!-- Web App Manifest for Fullscreen Standalone App (Hides URL Bar) -->
+  <link rel="manifest" href="data:application/json,{%22name%22:%22KNChat%22,%22short_name%22:%22KNChat%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%2307090e%22,%22theme_color%22:%22%2307090e%22}">
+
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1506,6 +1510,22 @@
     function escapeHTML(str) {
       return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
     }
+
+    // Auto Hide Address Bar On Mobile Interactivity
+    function autoHideAddressBar() {
+      if (!window.location.hash) {
+        if (document.height < window.innerHeight) {
+          document.body.style.height = (window.innerHeight + 50) + 'px';
+        }
+        setTimeout(function() {
+          window.scrollTo(0, 1);
+        }, 50);
+      }
+    }
+
+    window.addEventListener("load", autoHideAddressBar);
+    document.addEventListener("click", autoHideAddressBar);
+    document.addEventListener("touchstart", autoHideAddressBar);
   </script>
 </body>
 </html>
