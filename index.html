@@ -903,7 +903,7 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://afxhzppcjehkvalskbtd.supabase.co/rest/v1/';
+    const SUPABASE_URL = 'https://afxhzppcjehkvalskbtd.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Jzc-Od84UuWSEtbldY0LIg_aznQn8uD';
     const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
@@ -982,7 +982,10 @@
     }
 
     function stopRingtoneSound() {
-      if (ringtoneInterval) clearInterval(ringtoneInterval);
+      if (ringtoneInterval) {
+        clearInterval(ringtoneInterval);
+        ringtoneInterval = null;
+      }
     }
 
     function toggleRoomLock() {
@@ -1015,7 +1018,7 @@
     }
 
     function goHome() {
-      if (roomChannel) supabaseClient.removeChannel(roomChannel);
+      if (roomChannel && supabaseClient) supabaseClient.removeChannel(roomChannel);
       chatScreen.classList.add('hidden');
       authScreen.classList.remove('hidden');
       currentRoom = '';
@@ -1050,7 +1053,7 @@
         startGlobalAdminListener();
         alert("Live Notifications Activated for Admin!");
       } else {
-        if (globalAdminChannel) supabaseClient.removeChannel(globalAdminChannel);
+        if (globalAdminChannel && supabaseClient) supabaseClient.removeChannel(globalAdminChannel);
       }
     }
 
@@ -1224,7 +1227,7 @@
     }
 
     function toggleMute() {
-      if (localStream) {
+      if (localStream && localStream.getAudioTracks().length > 0) {
         isMuted = !isMuted;
         localStream.getAudioTracks()[0].enabled = !isMuted;
         document.getElementById('mute-icon').className = isMuted ? "fa-solid fa-microphone-slash" : "fa-solid fa-microphone";
@@ -1487,7 +1490,7 @@
     }
 
     function subscribeToRoom() {
-      if (roomChannel) supabaseClient.removeChannel(roomChannel);
+      if (roomChannel && supabaseClient) supabaseClient.removeChannel(roomChannel);
 
       roomChannel = supabaseClient.channel(`room_${currentRoom}`, {
         config: { presence: { key: myAlias } }
@@ -1718,23 +1721,8 @@
     }
 
     function escapeHTML(str) {
-      return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+      return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
     }
-
-    function autoHideAddressBar() {
-      if (!window.location.hash) {
-        if (document.height < window.innerHeight) {
-          document.body.style.height = (window.innerHeight + 50) + 'px';
-        }
-        setTimeout(function() {
-          window.scrollTo(0, 1);
-        }, 50);
-      }
-    }
-
-    window.addEventListener("load", autoHideAddressBar);
-    document.addEventListener("click", autoHideAddressBar);
-    document.addEventListener("touchstart", autoHideAddressBar);
   </script>
 </body>
 </html>
